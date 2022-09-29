@@ -11,7 +11,7 @@ extern void touchEvent(Fader* fader);
 extern unsigned short globalMessageWaitMillis;
 extern int globalMotorMinSpeed;
 extern int globalMotorSpeedScale;
-extern int globalMotorFrequency;
+extern unsigned short globalMotorFrequency;
 extern boolean globalRotated;
 extern byte globalMotherboardRevision;
 
