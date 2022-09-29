@@ -132,6 +132,8 @@ void resetNetDHCP(){
   EEPROM.write(32, 2); // Ethernet Mode
 }
 
+
+
 void factoryReset(){
   EEPROM.write(0, 'F');
   EEPROM.write(1, 'A');
@@ -142,8 +144,8 @@ void factoryReset(){
   EEPROM.write(6, '8');
   EEPROM.write(7, 0);
 
-  EEPROM.put(14, (short)50); // Message wait (16 bit)
-  EEPROM.write(16, 120); // Motor Min Speed
+  EEPROM.put(14, defaultMessageWaitMillis); // Message wait (16 bit)
+  EEPROM.write(16, defaultMotorMinSpeed); // Motor Min Speed
   EEPROM.write(17, 8); // Motor Scale Factor
   EEPROM.write(18, 250); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
