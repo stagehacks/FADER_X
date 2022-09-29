@@ -1,4 +1,10 @@
-
+static unsigned short defaultMessageWaitMillis = 50;
+static byte defaultMotorMinSpeed = 120;
+static byte defaultMotorFrequency = 250;
+static byte defaultStaticIP[4] = {192, 168, 1, 130};
+static byte defaultSubnetIP[4] = {255, 255, 255, 0};
+static byte defaultGatewayIP[4] = {192, 168, 1, 1};
+static byte defaultDestinationIP[4] = {192, 168, 1, 120};
 
 boolean applySettings(EthernetClient*client, String*b){
 
@@ -14,15 +20,9 @@ boolean applySettings(EthernetClient*client, String*b){
     pauseAllFaders();
     globalNewSettingsFlag = true;
     
-    
     char token[4];
     String tokenParam = getParameter(b, tok);
     tokenParam.toCharArray(token, 4);
-
-//    if(token[0]==SESSION_TOKEN[0] && token[1]==SESSION_TOKEN[1] && token[2]==SESSION_TOKEN[2] && token[3]==SESSION_TOKEN[3]){
-//      Serial.println("Token Match - do not save!");
-//      return false;
-//    }
 
     EEPROM.write(8, token[0]);
     EEPROM.write(9, token[1]);
@@ -101,13 +101,23 @@ boolean applySettings(EthernetClient*client, String*b){
   int e1 = containsParam(b, "e1");
   int e2 = containsParam(b, "e2");
   
+  // Motor Settings
 
   if(t0){
     globalMessageWaitMillis = getParameter(b, t0).toInt();
-    EEPROM.put(14, globalMessageWaitMillis);
+    if(globalMessageWaitMillis>0 & globalMessageWaitMillis<=1000){
+      EEPROM.put(14, globalMessageWaitMillis);
+    }else{
+      EEPROM.put(14, defaultMessageWaitMillis);
+    }
   }
   if(t1){
-    globalMotorMinSpeed = getParameter(b, t1).toInt();
+    byte x = getParameter(b, t1).toInt();
+    if(x>100 && x<256){
+      globalMotorMinSpeed = x;
+    }else{
+      globalMotorMinSpeed = defaultMotorMinSpeed;
+    }
     EEPROM.write(16, globalMotorMinSpeed);
   }
   if(t2){
@@ -115,8 +125,14 @@ boolean applySettings(EthernetClient*client, String*b){
     EEPROM.write(17, globalMotorSpeedScale);
   }
   if(t3){
-    globalMotorFrequency = getParameter(b, t3).toInt();
+    unsigned short x = getParameter(b, t3).toInt();
+    if(globalMotorFrequency>0){
+      globalMotorFrequency = x;
+    }else{
+      globalMotorFrequency = defaultMotorFrequency;
+    }
     EEPROM.write(18, globalMotorFrequency);
+    
   }
   if(rot){
     EEPROM.write(20, 1);
@@ -136,65 +152,90 @@ boolean applySettings(EthernetClient*client, String*b){
     globalMode = OP_Dance;
   }
 
+  // Network Settings
+
   if(n1){
     byte ethernetMode = getParameter(b, n1).toInt();
     EEPROM.write(32, ethernetMode);
   }
   if(n2){
     String ethernetStatic = getParameter(b, n2);
-
     int p1 = ethernetStatic.indexOf(".");
     int p2 = ethernetStatic.indexOf(".", p1+1);
     int p3 = ethernetStatic.indexOf(".", p2+1);
 
-    EEPROM.write(34, (byte)ethernetStatic.substring(0, p1).toInt());
-    EEPROM.write(35, (byte)ethernetStatic.substring(p1+1, p2).toInt());
-    EEPROM.write(36, (byte)ethernetStatic.substring(p2+1, p3).toInt());
-    EEPROM.write(37, (byte)ethernetStatic.substring(p3+1).toInt());
+    if(p3>p2 && p2>p1){
+      EEPROM.write(34, (byte)ethernetStatic.substring(0, p1).toInt());
+      EEPROM.write(35, (byte)ethernetStatic.substring(p1+1, p2).toInt());
+      EEPROM.write(36, (byte)ethernetStatic.substring(p2+1, p3).toInt());
+      EEPROM.write(37, (byte)ethernetStatic.substring(p3+1).toInt());
+    }else{
+      EEPROM.write(34, defaultStaticIP[0]);
+      EEPROM.write(35, defaultStaticIP[1]);
+      EEPROM.write(36, defaultStaticIP[2]);
+      EEPROM.write(37, defaultStaticIP[3]);
+    }
 
   }
   if(n3){
     String ethernetSubnet = getParameter(b, n3);
-
     int p1 = ethernetSubnet.indexOf(".");
     int p2 = ethernetSubnet.indexOf(".", p1+1);
     int p3 = ethernetSubnet.indexOf(".", p2+1);
 
-    EEPROM.write(38, (byte)ethernetSubnet.substring(0, p1).toInt());
-    EEPROM.write(39, (byte)ethernetSubnet.substring(p1+1, p2).toInt());
-    EEPROM.write(40, (byte)ethernetSubnet.substring(p2+1, p3).toInt());
-    EEPROM.write(41, (byte)ethernetSubnet.substring(p3+1).toInt());
+    if(p3>p2 && p2>p1){
+      EEPROM.write(38, (byte)ethernetSubnet.substring(0, p1).toInt());
+      EEPROM.write(39, (byte)ethernetSubnet.substring(p1+1, p2).toInt());
+      EEPROM.write(40, (byte)ethernetSubnet.substring(p2+1, p3).toInt());
+      EEPROM.write(41, (byte)ethernetSubnet.substring(p3+1).toInt());
+    }else{
+      EEPROM.write(38, defaultSubnetIP[0]);
+      EEPROM.write(39, defaultSubnetIP[1]);
+      EEPROM.write(40, defaultSubnetIP[2]);
+      EEPROM.write(41, defaultSubnetIP[3]);
+    }
 
   }
   if(n4){
     String ethernetGateway = getParameter(b, n4);
-
     int p1 = ethernetGateway.indexOf(".");
     int p2 = ethernetGateway.indexOf(".", p1+1);
     int p3 = ethernetGateway.indexOf(".", p2+1);
 
-    EEPROM.write(42, (byte)ethernetGateway.substring(0, p1).toInt());
-    EEPROM.write(43, (byte)ethernetGateway.substring(p1+1, p2).toInt());
-    EEPROM.write(44, (byte)ethernetGateway.substring(p2+1, p3).toInt());
-    EEPROM.write(45, (byte)ethernetGateway.substring(p3+1).toInt());
+    if(p3>p2 && p2>p1){
+      EEPROM.write(42, (byte)ethernetGateway.substring(0, p1).toInt());
+      EEPROM.write(43, (byte)ethernetGateway.substring(p1+1, p2).toInt());
+      EEPROM.write(44, (byte)ethernetGateway.substring(p2+1, p3).toInt());
+      EEPROM.write(45, (byte)ethernetGateway.substring(p3+1).toInt());
+    }else{
+      EEPROM.write(42, defaultGatewayIP[0]);
+      EEPROM.write(43, defaultGatewayIP[1]);
+      EEPROM.write(44, defaultGatewayIP[2]);
+      EEPROM.write(45, defaultGatewayIP[3]);
+    }
 
   }
   if(n5){
     int ethernetPort = getParameter(b, n5).toInt();
     EEPROM.put(46, ethernetPort);
-    
   }
   if(n6){
     String ethernetDest = getParameter(b, n6);
-
     int p1 = ethernetDest.indexOf(".");
     int p2 = ethernetDest.indexOf(".", p1+1);
     int p3 = ethernetDest.indexOf(".", p2+1);
 
-    EEPROM.write(48, (byte)ethernetDest.substring(0, p1).toInt());
-    EEPROM.write(49, (byte)ethernetDest.substring(p1+1, p2).toInt());
-    EEPROM.write(50, (byte)ethernetDest.substring(p2+1, p3).toInt());
-    EEPROM.write(51, (byte)ethernetDest.substring(p3+1).toInt());
+    if(p3>p2 && p2>p1){
+      EEPROM.write(48, (byte)ethernetDest.substring(0, p1).toInt());
+      EEPROM.write(49, (byte)ethernetDest.substring(p1+1, p2).toInt());
+      EEPROM.write(50, (byte)ethernetDest.substring(p2+1, p3).toInt());
+      EEPROM.write(51, (byte)ethernetDest.substring(p3+1).toInt());
+    }else{
+      EEPROM.write(48, defaultDestinationIP[0]);
+      EEPROM.write(49, defaultDestinationIP[1]);
+      EEPROM.write(50, defaultDestinationIP[2]);
+      EEPROM.write(51, defaultDestinationIP[3]);
+    }
 
   }
   if(n7){
@@ -203,7 +244,8 @@ boolean applySettings(EthernetClient*client, String*b){
     
   }
 
-  
+  // MIDI Settings
+
   if(m91){
     int midiListen = getParameter(b, m91).toInt();
     midi.listenChannel = midiListen;
@@ -215,6 +257,7 @@ boolean applySettings(EthernetClient*client, String*b){
     EEPROM.write(63, midiSend);
   }
 
+  // QLab Settings
 
   if(q1){
     int val = getParameter(b, q1).toInt();
@@ -246,9 +289,12 @@ boolean applySettings(EthernetClient*client, String*b){
     EEPROM.write(139, passcode[7]);
   }
 
+  // EOS Settings
+
   if(e1){ EEPROM.write(140, getParameter(b, e1).toInt()); }
   if(e2){ EEPROM.write(141, getParameter(b, e2).toInt()); }
 
+  // Channels
   
   if(ch1A){
     EEPROM.write(66, getParameter(b, ch1A).toInt());
