@@ -76,8 +76,8 @@ void Fader::loop(){
     if(abs(this->rawPosition-analogRead(this->readPin))>40){
       this->mode = 1;
       this->modeTimeout = 0;
-      Serial.print(this->realIndex);
-      Serial.println(" touched!");
+//      Serial.print(this->realIndex);
+//      Serial.println(" touched!");
       
     }else if(distanceToTarget>15){
       this->mode = 2;
