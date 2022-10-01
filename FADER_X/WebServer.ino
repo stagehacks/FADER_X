@@ -19,7 +19,7 @@ String headTemplate = "<!DOCTYPE HTML>\n"
 "    button:hover{opacity:0.9;}\n"
 "    header{background-color:#34383d;color:white;padding:20px;font-weight:bold;position:fixed;width:100%;top:0;z-index:1000;border-bottom:#fdea0a 2px solid;}\n"
 "    .note{font-size: 12px;}\n"
-"    a{color: #aaa;margin-left: 30px;}\n"
+"    a{color: #aaa;margin-left: 40px;}\n"
 "  </style>\n"
 "</head>\n";
 
