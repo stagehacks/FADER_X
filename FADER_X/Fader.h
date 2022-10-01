@@ -13,9 +13,8 @@ class Fader {
     int mode = 0;
     int prevDistance;
     long lastActualMove = 0;
-
-    elapsedMillis modeTimeout = 0;
-    elapsedMillis touchEventTimeout = 0;    
+    long lastTouchEvent = 0;
+    long lastUpdate = 0;
  
   public:
     Fader(int r, int realIndex);    
@@ -23,8 +22,8 @@ class Fader {
     void setup(byte index);
     void loop();
 
-    void touchLoop();
-    void motorLoop();
+    void touchLoop(long mils);
+    void motorLoop(long mils);
     void ledUpdate();
     void pause();
     void unpause();

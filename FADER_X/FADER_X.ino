@@ -46,8 +46,6 @@ elapsedMillis globalClock = 0;
 boolean globalFirstBoot = true;
 long lastButton1Press = 0;
 long lastButton2Press = 0;
-
-elapsedMillis heartbeatTimer = 0;
 char sessionToken[4];
 
 #define OP_Midi 1
