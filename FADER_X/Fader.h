@@ -11,10 +11,10 @@ class Fader {
     int motorPinB;
     int readPin;
     int mode = 0;
-    int prevDistance;
     long lastActualMove = 0;
     long lastTouchEvent = 0;
     long lastUpdate = 0;
+    long lastModeStart = 0;
  
   public:
     Fader(int r, int realIndex);    

@@ -80,53 +80,85 @@ void Fader::loop(){
     distanceToTarget = 0;
   }
 
+  boolean timedOut = mils-this->lastUpdate > max(200, globalMessageWaitMillis);
 
-  if(this->mode == FMODE_Rest){
-    if(abs(this->rawPosition-analogRead(this->readPin))>40){
-      this->mode = FMODE_Touch;
-      this->lastUpdate = mils;
-//      Serial.print(this->realIndex);
-//      Serial.println(" touched!");
+  switch(this->mode){
+    case FMODE_Rest:
+      if(abs(this->rawPosition-analogRead(this->readPin))>40){
+        this->mode = FMODE_Touch;
+        this->lastUpdate = mils;
+        this->lastModeStart = mils;
+  //      Serial.print(this->realIndex);
+  //      Serial.println(" touched!");
+        
+      }else if(distanceToTarget>15){
+        this->mode = FMODE_Motor;
+        this->lastUpdate = mils;
+        this->lastModeStart = mils;
+        
+      }
+      analogWrite(this->motorPinA, 0);
+      analogWrite(this->motorPinB, 0);
+      break;
+
       
-    }else if(distanceToTarget>15){
-      this->mode = FMODE_Motor;
-      this->lastUpdate = mils;
-      
-    }
-    analogWrite(this->motorPinA, 0);
-    analogWrite(this->motorPinB, 0);
+    case FMODE_Touch:
+      if(timedOut){
+        touchEvent(this);
+        this->mode = FMODE_Rest;
+        this->lastModeStart = mils;
+      }else{
+        this->rawPosition = analogRead(this->readPin);
+        this->touchLoop(mils);
+      }
+      break;
+
+
+    case FMODE_Motor:
+      if(timedOut){
+        this->mode = FMODE_Rest;
+        this->lastModeStart = mils;
+        
+      }else if(mils-this->lastModeStart>1000){
+        if(abs(globalFaderTargets[this->channel]-this->getPosition())>20){
+          this->mode = FMODE_Stall;
+          this->lastModeStart = mils;
+        }else{
+          this->mode = FMODE_Rest;
+          this->lastModeStart = mils;
+        }
+      }else{
+        this->rawPosition = analogRead(this->readPin);
+        this->motorLoop(mils);
+      }
+      break;
+
+
+    case FMODE_Stall:
+      if(abs(this->rawPosition-analogRead(this->readPin))>200){
+        this->mode = FMODE_Touch;
+        this->lastUpdate = mils;
+      }
+      analogWrite(this->motorPinA, 0);
+      analogWrite(this->motorPinB, 0);
+      break;
+
+
+    case FMODE_Pause:
+      analogWrite(this->motorPinA, 0);
+      analogWrite(this->motorPinB, 0);
+      break;
     
-  }else if(this->mode == FMODE_Stall){
-    if(abs(this->rawPosition-analogRead(this->readPin))>200){
-      this->mode = FMODE_Touch;
-      this->lastUpdate = mils;
-    }
-    analogWrite(this->motorPinA, 0);
-    analogWrite(this->motorPinB, 0);
-    
-  }else if(this->mode == FMODE_Pause){
-    analogWrite(this->motorPinA, 0);
-    analogWrite(this->motorPinB, 0);
-    
-  }else{
-    this->rawPosition = analogRead(this->readPin);
   }
 
   
-  if(this->mode <= FMODE_Motor && mils-this->lastUpdate > max(200, globalMessageWaitMillis)){
+  if(this->mode <= FMODE_Motor && this->mode>FMODE_Rest && mils-this->lastUpdate > max(200, globalMessageWaitMillis)){
     if(this->mode == FMODE_Touch){
-      touchEvent(this);
+      touchEvent(this); // tail debounce
     }
     this->mode = FMODE_Rest;
+    this->lastModeStart = mils;
   }
-
-
-  if(this->mode == FMODE_Touch){
-    this->touchLoop(mils);
-  }else if(this->mode == FMODE_Motor){
-    this->motorLoop(mils);
-  }
-  
 
 }
 
@@ -142,12 +174,17 @@ void Fader::touchLoop(long mils){
 }
 
 
-
+int prevTarget = 0;
 void Fader::motorLoop(long mils){
 
   int target = globalFaderTargets[this->channel];
   int distance = target-this->getPosition();
   int speed = min(globalMotorMinSpeed+abs(distance)/globalMotorSpeedScale, 180);
+
+  if(prevTarget!=target){
+    this->lastModeStart = mils;
+  }
+  prevTarget = target;
 
   if(globalRotated){
     distance = distance*-1;
@@ -165,16 +202,6 @@ void Fader::motorLoop(long mils){
     analogWrite(this->motorPinA, 0);
     analogWrite(this->motorPinB, 0);
   }
-
-  if(abs(prevDistance-distance)>16){
-    prevDistance = distance;
-    this->lastActualMove = mils;
-  }
-
-  if(mils-lastActualMove>2000){
-    this->mode = FMODE_Stall;
-  }
-  
   
 }
 
