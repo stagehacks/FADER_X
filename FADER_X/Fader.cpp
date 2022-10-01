@@ -24,6 +24,13 @@ extern elapsedMillis globalClock;
 
 boolean firstSetup = true;
 
+#define FMODE_DISABLED -1
+#define FMODE_REST 0
+#define FMODE_TOUCH 1
+#define FMODE_MOTOR 2
+#define FMODE_PAUSE 3
+#define FMODE_STALL 4
+
 Fader::Fader(int r, int realIndex){
   this->readPin = r;
   this->realIndex = realIndex;
@@ -43,7 +50,7 @@ void Fader::setup(byte index){
   pinMode(this->readPin, INPUT_PULLUP);
 
   if(analogRead(this->readPin)>4085){
-    this->mode = -1;
+    this->mode = FMODE_DISABLED;
   }
 
   analogWriteFrequency(motorPinA, globalMotorFrequency);
@@ -56,7 +63,7 @@ void Fader::setup(byte index){
 
 
 void Fader::loop(){
-  if(this->mode==-1){ return; }
+  if(this->mode == FMODE_DISABLED){ return; }
 
   if(globalClock<100){
     this->rawPosition = analogRead(this->readPin);
@@ -72,18 +79,31 @@ void Fader::loop(){
     distanceToTarget = 0;
   }
 
-  if(this->mode == 0){
+
+  if(this->mode == FMODE_REST){
     if(abs(this->rawPosition-analogRead(this->readPin))>40){
-      this->mode = 1;
+      this->mode = FMODE_TOUCH;
       this->modeTimeout = 0;
 //      Serial.print(this->realIndex);
 //      Serial.println(" touched!");
       
     }else if(distanceToTarget>15){
-      this->mode = 2;
+      this->mode = FMODE_MOTOR;
       this->modeTimeout = 0;
       
     }
+    analogWrite(this->motorPinA, 0);
+    analogWrite(this->motorPinB, 0);
+    
+  }else if(this->mode == FMODE_STALL){
+    if(abs(this->rawPosition-analogRead(this->readPin))>200){
+      this->mode = FMODE_TOUCH;
+      this->modeTimeout = 0;
+    }
+    analogWrite(this->motorPinA, 0);
+    analogWrite(this->motorPinB, 0);
+    
+  }else if(this->mode == FMODE_PAUSE){
     analogWrite(this->motorPinA, 0);
     analogWrite(this->motorPinB, 0);
     
@@ -91,20 +111,19 @@ void Fader::loop(){
     this->rawPosition = analogRead(this->readPin);
   }
 
-  if(this->mode == 3){
-    analogWrite(this->motorPinA, 0);
-    analogWrite(this->motorPinB, 0);
-  }else if(this->modeTimeout>max(200, globalMessageWaitMillis)){
-    if(this->mode==1){
+  
+
+  if(this->mode <= FMODE_MOTOR && this->modeTimeout>max(200, globalMessageWaitMillis)){
+    if(this->mode == FMODE_TOUCH){
       touchEvent(this);
     }
-    this->mode = 0;
+    this->mode = FMODE_REST;
   }
 
 
-  if(this->mode == 1){
+  if(this->mode == FMODE_TOUCH){
     this->touchLoop();
-  }else if(this->mode == 2){
+  }else if(this->mode == FMODE_MOTOR){
     this->motorLoop();
   }
   
@@ -145,6 +164,15 @@ void Fader::motorLoop(){
   }else{
     analogWrite(this->motorPinA, 0);
     analogWrite(this->motorPinB, 0);
+  }
+
+  if(abs(prevDistance-distance)>16){
+    prevDistance = distance;
+    this->lastActualMove = millis();
+  }
+
+  if(millis()-lastActualMove>2000){
+    this->mode = FMODE_STALL;
   }
   
   
