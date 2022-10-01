@@ -19,12 +19,15 @@ String headTemplate = "<!DOCTYPE HTML>\n"
 "    button:hover{opacity:0.9;}\n"
 "    header{background-color:#34383d;color:white;padding:20px;font-weight:bold;position:fixed;width:100%;top:0;z-index:1000;border-bottom:#fdea0a 2px solid;}\n"
 "    .note{font-size: 12px;}\n"
-"    a{color: #aaa}\n"
+"    a{color: #aaa;margin-left: 30px;}\n"
 "  </style>\n"
 "</head>\n";
 
 String bodyTemplate = "<body>"
-"<header>FADER_X Configuration<button form='main' type='Submit'>Apply Settings</button><a href='/reset'>Factory Reset</a></header>"
+"<header>FADER_X Configuration"
+  "<button form='main' type='Submit'>Apply Settings</button>"
+  "<a href='/reset'>Factory Reset</a><a href='https://github.com/stagehacks/FADER_X'>Readme</a><a>Version {v1}.{v2}.{v3}</a>"
+"</header>"
 "<form id='main' method='get' action='/apply'>"
 "<input value='{tok1}{tok2}{tok3}{tok4}' name='sessionToken' type='hidden'>"
 "<table>"
@@ -279,6 +282,10 @@ void serveGET(EthernetClient client) {
 void generateIndex(){
 
   String temp = bodyTemplate;
+
+  temp.replace("{v1}", EEPROM.read(8));
+  temp.replace("{v2}", EEPROM.read(9));
+  temp.replace("{v3}", EEPROM.read(10));
 
   temp.replace("{msg-wait}", globalMessageWaitMillis);
   temp.replace("{min-speed}", globalMotorMinSpeed);
