@@ -40,9 +40,10 @@ float faderToAudioLevel(float val){
 char buf[Ethernet.mtu() - 20 - 8];
 elapsedMillis sincePlaybackPositionChanged = 0;
 void QLab::loop(){
+  long mils = millis();
 
-  if(millis()-lastHeartbeat>10000){
-    lastHeartbeat = millis();
+  if(mils-lastHeartbeat>10000){
+    lastHeartbeat = mils;
     this->heartbeat();
   }
 

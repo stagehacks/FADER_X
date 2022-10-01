@@ -14,13 +14,13 @@ extern int globalMotorSpeedScale;
 extern unsigned short globalMotorFrequency;
 extern boolean globalRotated;
 extern byte globalMotherboardRevision;
+extern long globalLastBoot;
 
 static byte PINS_1_A[8] = {0, 2, 4, 6, 8, 10, 24, 28};
 static byte PINS_1_B[8] = {1, 3, 5, 7, 9, 12, 25, 29};
 static byte PINS_2_A[8] = {1, 2, 5, 6, 9, 10, 36, 28};
 static byte PINS_2_B[8] = {0, 3, 4, 7, 8, 12, 37, 29};
 
-extern elapsedMillis globalClock;
 
 boolean firstSetup = true;
 
@@ -66,7 +66,7 @@ void Fader::loop(){
   if(this->mode == FMODE_Disabled){ return; }
   long mils = millis();
   
-  if(globalClock<100){
+  if(mils-globalLastBoot < 100){
     this->rawPosition = analogRead(this->readPin);
     globalFaderTargets[this->channel] = this->getPosition();
     return;
@@ -113,7 +113,6 @@ void Fader::loop(){
   }
 
   
-
   if(this->mode <= FMODE_Motor && mils-this->lastUpdate > max(200, globalMessageWaitMillis)){
     if(this->mode == FMODE_Touch){
       touchEvent(this);
