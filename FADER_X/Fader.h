@@ -11,6 +11,8 @@ class Fader {
     int motorPinB;
     int readPin;
     int mode = 0;
+    int prevDistance;
+    long lastActualMove = 0;
 
     elapsedMillis modeTimeout = 0;
     elapsedMillis touchEventTimeout = 0;    
