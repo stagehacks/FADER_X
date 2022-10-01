@@ -15,6 +15,6 @@ void Midi::loop(){
 }
 
 void Midi::touchEvent(int channel, Fader *fader){
-  Serial.println("midi touch");
+  //Serial.println("midi touch");
   usbMIDI.sendControlChange(channel, fader->getPositionTrimmed()/8, this->sendChannel);
 }
