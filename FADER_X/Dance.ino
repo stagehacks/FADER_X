@@ -12,7 +12,6 @@ void danceLoop(){
     
   }else if(globalClock>2500 && !zeroFlag){
     zeroFlag = true;
-    Serial.println("zero");
     for(byte i=0; i<255; i++){
       globalFaderTargets[i] = 0;
     }
