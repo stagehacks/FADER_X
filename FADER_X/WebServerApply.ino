@@ -1,6 +1,6 @@
 static unsigned short defaultMessageWaitMillis = 50;
 static byte defaultMotorMinSpeed = 120;
-static byte defaultMotorFrequency = 250;
+static unsigned short defaultMotorFrequency = 300;
 static byte defaultStaticIP[4] = {192, 168, 1, 130};
 static byte defaultSubnetIP[4] = {255, 255, 255, 0};
 static byte defaultGatewayIP[4] = {192, 168, 1, 1};
@@ -105,7 +105,7 @@ boolean applySettings(EthernetClient*client, String*b){
 
   if(t0){
     globalMessageWaitMillis = getParameter(b, t0).toInt();
-    if(globalMessageWaitMillis>0 & globalMessageWaitMillis<=1000){
+    if(globalMessageWaitMillis>0 && globalMessageWaitMillis<=1000){
       EEPROM.put(14, globalMessageWaitMillis);
     }else{
       EEPROM.put(14, defaultMessageWaitMillis);
