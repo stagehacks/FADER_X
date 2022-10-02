@@ -113,7 +113,7 @@ boolean applySettings(EthernetClient*client, String*b){
   }
   if(t1){
     byte x = getParameter(b, t1).toInt();
-    if(x>80 && x<256){
+    if(x>20 && x<256){
       globalMotorMinSpeed = x;
     }else{
       globalMotorMinSpeed = defaultMotorMinSpeed;
@@ -131,7 +131,7 @@ boolean applySettings(EthernetClient*client, String*b){
     }else{
       globalMotorFrequency = defaultMotorFrequency;
     }
-    EEPROM.write(18, globalMotorFrequency);
+    EEPROM.put(18, globalMotorFrequency);
     
   }
   if(rot){

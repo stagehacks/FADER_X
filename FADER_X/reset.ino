@@ -5,6 +5,7 @@ void newSettings(){
   globalMode = EEPROM.read(24);
   globalMotorMinSpeed = EEPROM.read(16);
   globalMotorSpeedScale = EEPROM.read(17);
+  EEPROM.get(18, globalMotorFrequency);
   globalMotherboardRevision = EEPROM.read(21);
 
   for(byte i=0; i<32; i++){
