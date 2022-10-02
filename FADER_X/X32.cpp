@@ -2,6 +2,7 @@
 #include "Net.h"
 
 extern Net net;
+extern void setFaderTarget(byte index, int value);
 
 void X32::setup(){
   Serial.println("X32 setup");
@@ -39,28 +40,40 @@ void X32::touchEvent(int channel, Fader *fader){
   udp.beginPacket(net.IP_Destination, 10023);
   msg.writeUDP(&udp);
   udp.endPacket();
+
+  Serial.print("sent: ");
+  Serial.println(msg.getAddress());
 }
 
 
 void X32::processOSC(OSCMessage msg){
   String oscAddr = msg.getAddress();
 
-  if(oscAddr.startsWith("/faders")){
-    // some sort of blob response from X32
+  //Serial.print("revd: ");
+  //Serial.println(oscAddr);
+
+  if(msg.match("/ch/*/mix/fader")){
+    byte channel = msg.addressPart(1).toInt();
+    Serial.print(channel);
+    Serial.print("=");
+    Serial.println(msg.getFloat(0));
+    setFaderTarget(channel, msg.getFloat(0)*1023);
   }
 
 }
 
 
 void X32::updateSubscription(){
-  OSCMessage msg("/formatsubscribe");
-  msg.addString("/faders");
-  msg.addString("/ch/**/mix/fader");
-  msg.addInt(1);
-  msg.addInt(32);
-  msg.addInt(2);
+  OSCMessage msg("/xremote");
+//  msg.addString("/faders");
+//  msg.addString("/ch/**/mix/fader");
+//  msg.addInt(1);
+//  msg.addInt(32);
+//  msg.addInt(2);
 
   udp.beginPacket(net.IP_Destination, 10023);
   msg.writeUDP(&udp);
   udp.endPacket();
+
+  Serial.println("updated sub");
 }
