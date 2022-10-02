@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <PID_v1.h>
 #pragma once
 
 extern int globalFaderTargets[255];
@@ -11,10 +12,12 @@ class Fader {
     int motorPinB;
     int readPin;
     int mode = 0;
-    long lastActualMove = 0;
     long lastTouchEvent = 0;
-    long lastUpdate = 0;
+    long lastMotorEvent = 0;
     long lastModeStart = 0;
+    int lastTouchValue = 0;
+    int lastStartPosition = 0;
+    int easeSpeed = 0;
  
   public:
     Fader(int r, int realIndex);    
@@ -22,14 +25,14 @@ class Fader {
     void setup(byte index);
     void loop();
 
-    void touchLoop(long mils);
-    void motorLoop(long mils);
+    void touchLoop();
+    void motorLoop();
     void ledUpdate();
     void pause();
     void unpause();
     void tick();
     void setTarget(int position);
-    void setMode(int m);
+    void setMode(byte m);
     void updateChannel();
     int getPositionTrimmed();
     int getPosition();
