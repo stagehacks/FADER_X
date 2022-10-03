@@ -24,10 +24,10 @@ boolean applySettings(EthernetClient*client, String*b){
     String tokenParam = getParameter(b, tok);
     tokenParam.toCharArray(token, 4);
 
-    EEPROM.write(8, token[0]);
-    EEPROM.write(9, token[1]);
-    EEPROM.write(10, token[2]);
-    EEPROM.write(11, token[3]);
+//    EEPROM.write(8, token[0]);
+//    EEPROM.write(9, token[1]);
+//    EEPROM.write(10, token[2]);
+//    EEPROM.write(11, token[3]);
 
     sessionToken[0] = token[0];
     sessionToken[1] = token[1];
