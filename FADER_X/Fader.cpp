@@ -147,7 +147,7 @@ int prevTarget = 0;
 void Fader::motorLoop(){
 
   int target = globalFaderTargets[this->channel];
-  this->easeSpeed = 50+abs(target-this->lastStartPosition)/2;
+  this->easeSpeed = 100+abs(target-this->lastStartPosition)/2;
   ease.duration(this->easeSpeed);
    
   if(prevTarget!=target){
@@ -163,8 +163,9 @@ void Fader::motorLoop(){
 
   }else{
     int distance = target-this->getPosition();
-    if(mils-this->lastModeStart<EaseSpeed){
-      int scaledTarget = this->lastStartPosition+((target-this->lastStartPosition)*ease.get(mils-this->lastModeStart));
+    
+    if(mils-this->lastModeStart < EaseSpeed && mils-this->lastModeStart>0){
+      int scaledTarget = this->lastStartPosition+((target-this->lastStartPosition)*(ease.get(mils-this->lastModeStart)));
       distance = scaledTarget-this->getPosition();
     }
   
