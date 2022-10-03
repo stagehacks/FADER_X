@@ -1,6 +1,6 @@
 # FADER_X
  
-Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
+Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
 
 ## Supports
 - Generic MIDI
@@ -78,3 +78,31 @@ On the Console
 On FADER_X Configuration web app
 - Configure FADER_X `OSC Destination Port` parameter to match a OSC Receive port on your console.
 - Configure FADER_X `Receive Port` parameter to match a OSC Send port on your console.
+
+
+
+&nbsp;
+
+&nbsp;
+
+
+# Reprogramming a FADER_X Device
+## From precompiled .hex file
+1) Install [Teensy Loader](https://www.pjrc.com/teensy/loader.html)
+2) Download the latest binary from [Releases](https://github.com/stagehacks/FADER_X/releases)
+3) Open Teensy Loader
+4) Press the indicated button on your Teensy
+5) Click the `Open HEX File` icon in Teensy Loader and select the binary file
+6) Click the `Program` icon in Teensy Loader
+7) When complete, click the `Reboot` icon in Teensy Loader
+
+## From Source Code
+In broad strokes, here's how to reprogram the Teensy 4.1 inside a FADER_X using Teensyduino. You should be somewhat comfortable with Arduino programming before going this route. 
+1) Install [Teensyduino](https://www.pjrc.com/teensy/td_download.html)
+2) Download this repository and open it in Teensyduino
+3) Naviage to `Tools` > `Manage Libraries` to open the Library Manager
+4) Install the libraries `QNEthernet` and `Easing`
+5) Connect the Teensy to the computer with a USB Cable
+6) Naviage to `Tools` > `Board` > `Teensyduino` and select Teensy 4.1
+7) Naviage to `Tools` > `Port` and select the Teensy
+8) Naviage to `Tools` > `USB Type` and select MIDI
