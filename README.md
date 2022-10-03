@@ -20,10 +20,6 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 &nbsp;
 
-# Factory Resetting
-Holding down the buttons labeled `DHCP` or `Static` for 5 seconds will reset the FADER_X device to factory settings. Depending on which button is held, it will restore to `192.168.1.130` Static IP or DHCP networking.
-
-
 # Device Configuration
 ## Generic MIDI
 No OSC messages are sent when the FADER_X device is in MIDI mode. The configuration web server is active, and the FADER_X responds to `/page` messages.
@@ -86,6 +82,8 @@ On FADER_X Configuration web app
 
 &nbsp;
 
+# Factory Resetting
+Holding down the buttons labeled `DHCP` or `Static` for 5 seconds will reset the FADER_X device to factory settings. Depending on which button is held, it will restore to `192.168.1.130` Static IP or DHCP networking.
 
 # Reprogramming a FADER_X Device
 ## From precompiled .hex file
