@@ -1,4 +1,4 @@
-# FADER_X
+# 🎚FADER_X
  
 Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
 
