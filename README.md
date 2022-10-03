@@ -1,7 +1,7 @@
 
 
 # 🎚FADER_X
-<img align="right" src="https://user-images.githubusercontent.com/919746/193483114-41e6a3aa-9378-4de7-8e9b-f1b403b68153.png">
+<img align="right" width="50%" src="https://user-images.githubusercontent.com/919746/193483114-41e6a3aa-9378-4de7-8e9b-f1b403b68153.png">
 
 Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
 
