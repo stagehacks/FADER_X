@@ -4,16 +4,17 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 ## Supports
 - Generic MIDI
-- QLab (MIDI + OSC)
-- ETC Eos (OSC)
-- X32/M32 (OSC)
-- DiGiCo (OSC)
+- QLab (MIDI + UDP OSC)
+- ETC Eos (TCP OSC)
+- X32/M32 (UDP OSC)
+- DiGiCo (UDP OSC)
 
 
 ## Features
 - Built-in web server hosts a configuration web app
 - Up to 4 pages/banks of faders
 - Advanced motion easing for motorized fader moves
+- Custom OSC library
 
 &nbsp;
 
