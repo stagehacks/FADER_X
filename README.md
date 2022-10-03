@@ -1,5 +1,6 @@
+<img align="right" src="https://user-images.githubusercontent.com/919746/193483114-41e6a3aa-9378-4de7-8e9b-f1b403b68153.png">
+
 # 🎚FADER_X
- 
 Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
 
 ## Supports
@@ -21,7 +22,9 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 &nbsp;
 
 # Device Configuration
-#### 🚨 Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. 
+<img width="400px" src="https://user-images.githubusercontent.com/919746/193483214-978e690e-beae-4dc0-bc48-3eb1114815f1.png" align="right">
+
+#### 🚨 Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. 🚨
 
 ## Generic MIDI
 No OSC messages are sent when the FADER_X device is in MIDI mode. The configuration web server is active, and the FADER_X responds to `/page` messages.
