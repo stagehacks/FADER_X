@@ -31,3 +31,4 @@
 *.out
 *.app
 .DS_Store
+FADER_X/FADER_X.ino.TEENSY41.hex
