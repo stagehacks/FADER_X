@@ -37,6 +37,20 @@ No OSC messages are sent when the FADER_X device is in MIDI mode. The configurat
 
 ---
 
+## DiGiCo
+On the Console
+- Navigate the main screen to `Setup` > `External Control`.
+- Ensure `External Control` is set to `YES`
+- Add a new External Device if necessary
+- Ensure the `Enabled` column displays a checkmark for all devices you wish to use.
+- DiGiCo consoles on software V685 only support one OSC device.
+
+On FADER_X Configuration web app
+- Configure FADER_X `OSC Destination Port` parameter to match a OSC Receive port on your console.
+- Configure FADER_X `Receive Port` parameter to match a OSC Send port on your console.
+
+---
+
 ## QLab
 - Connects to the console via UDP OSC. 
 - Configure `OSC Destination Port` parameter to match QLab. QLab's default listening port is `53000`.
@@ -69,17 +83,7 @@ No OSC messages are sent when the FADER_X device is in MIDI mode. The configurat
 
 ---
 
-## DiGiCo
-On the Console
-- Navigate the main screen to `Setup` > `External Control`.
-- Ensure `External Control` is set to `YES`
-- Add a new External Device if necessary
-- Ensure the `Enabled` column displays a checkmark for all devices you wish to use.
-- DiGiCo consoles on software V685 only support one OSC device.
 
-On FADER_X Configuration web app
-- Configure FADER_X `OSC Destination Port` parameter to match a OSC Receive port on your console.
-- Configure FADER_X `Receive Port` parameter to match a OSC Send port on your console.
 
 
 
