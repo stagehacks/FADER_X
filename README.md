@@ -1,7 +1,8 @@
 
 
 # 🎚FADER_X
-<img align="right" src="https://user-images.githubusercontent.com/919746/193483114-41e6a3aa-9378-4de7-8e9b-f1b403b68153.png">
+<img align="right" width="50%" src="https://user-images.githubusercontent.com/919746/193483114-41e6a3aa-9378-4de7-8e9b-f1b403b68153.png">
+
 Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
 
 ## Supports
@@ -95,6 +96,8 @@ On FADER_X Configuration web app
 # Factory Resetting
 Holding down the buttons labeled `DHCP` or `Static` for 5 seconds will reset the FADER_X device to factory settings. Depending on which button is held, it will restore to `192.168.1.130` Static IP or DHCP networking.
 
+&nbsp;
+
 # Reprogramming a FADER_X Device
 ## From precompiled .hex file
 1) Install [Teensy Loader](https://www.pjrc.com/teensy/loader.html)
@@ -115,3 +118,13 @@ In broad strokes, here's how to reprogram the Teensy 4.1 inside a FADER_X using 
 6) Naviage to `Tools` > `Board` > `Teensyduino` and select Teensy 4.1
 7) Naviage to `Tools` > `Port` and select the Teensy
 8) Naviage to `Tools` > `USB Type` and select MIDI
+
+&nbsp;
+
+# Hardware Tuning
+The physical resistance to touch on a fader can be dgusted using the following procedure.
+1) Remove the front cover of the FADER_X using a M2.5 hex tool
+2) For each fader to adjust, slightly loosen the screws holding the motor to the metal channel.
+3) Adjust the motor's position to suit, then tighten the screws.
+
+Changing the tension on the faders may require adustment of the `Minimum Speed` parameter in the configuration web app.
