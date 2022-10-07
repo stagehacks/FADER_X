@@ -46,7 +46,11 @@ long globalLastBoot = 0;
 boolean globalFirstBoot = true;
 long lastButton1Press = 0;
 long lastButton2Press = 0;
+long lastSerialLog = -10000;
 char sessionToken[4];
+byte versionMajor;
+byte versionMinor;
+byte versionSub;
 
 #define OP_Midi 1
 #define OP_Midi_NoMotor 2
@@ -141,6 +145,13 @@ void loop() {
     }
   }
 
+  if(millis() - lastSerialLog > 10000){
+    lastSerialLog = millis();
+    serialHeartbeat();
+  }
+
+ 
+
   digitalWrite(LED_BUILTIN, button1.read() && button2.read());
 
 
@@ -202,4 +213,28 @@ void unpauseAllFaders(){
 
 void setFaderTarget(byte index, int value){
   globalFaderTargets[index] = max(0, min(1023, value));
+}
+
+void serialHeartbeat(){
+  Serial.print("FADER_X VERSION ");
+  Serial.print(versionMajor);
+  Serial.print(".");
+  Serial.print(versionMinor);
+  Serial.print(".");
+  Serial.println(versionSub);
+  
+  Serial.print("IP Address = ");
+  Serial.print(net.IP_Static[0]);
+  Serial.print(".");
+  Serial.print(net.IP_Static[1]);
+  Serial.print(".");
+  Serial.print(net.IP_Static[2]);
+  Serial.print(".");
+  Serial.println(net.IP_Static[3]);
+
+  Serial.print("Operation Mode = ");
+  Serial.println(globalMode);
+
+  Serial.print("Motherboard Revision = ");
+  Serial.println(globalMotherboardRevision);
 }
