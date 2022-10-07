@@ -283,9 +283,9 @@ void generateIndex(){
 
   String temp = bodyTemplate;
 
-  temp.replace("{v1}", EEPROM.read(8));
-  temp.replace("{v2}", EEPROM.read(9));
-  temp.replace("{v3}", EEPROM.read(10));
+  temp.replace("{v1}", versionMajor);
+  temp.replace("{v2}", versionMinor);
+  temp.replace("{v3}", versionSub);
 
   temp.replace("{msg-wait}", globalMessageWaitMillis);
   temp.replace("{min-speed}", globalMotorMinSpeed);

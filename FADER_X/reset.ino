@@ -1,6 +1,10 @@
 void newSettings(){
   Serial.println("===============================");
 
+  versionMajor = EEPROM.read(8);
+  versionMinor = EEPROM.read(9);
+  versionSub = EEPROM.read(10);
+
   EEPROM.get(14, globalMessageWaitMillis);
   globalMode = EEPROM.read(24);
   globalMotorMinSpeed = EEPROM.read(16);
