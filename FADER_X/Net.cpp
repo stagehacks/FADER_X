@@ -22,12 +22,7 @@ void Net::setup(){
 
   if(Ethernet.begin()){
 
-    if(this->netMode==1){
-      Serial.print("Setting Static IP ");
-      Serial.println(this->IP_Static);
-      Ethernet.begin(this->IP_Static, this->IP_Subnet, this->IP_Gateway);
-      
-    }else if(this->netMode==2){
+    if(this->netMode == 2){
       if (!Ethernet.waitForLocalIP(5000)) {
         Serial.println("Unable to connect with DHCP");
         Serial.print("Changing to Static IP ");
@@ -39,7 +34,12 @@ void Net::setup(){
         Serial.println(this->IP_Static);
   
       }
+    }else{
+      Serial.print("Setting Static IP ");
+      Serial.println(this->IP_Static);
+      Ethernet.begin(this->IP_Static, this->IP_Subnet, this->IP_Gateway);
     }
+
     delay(100);
     globalWebServer.begin();
     Serial.print("Started Web Server ");
