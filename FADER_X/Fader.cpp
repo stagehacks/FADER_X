@@ -24,7 +24,7 @@ static byte PINS_2_B[8] = {0, 3, 4, 7, 8, 12, 37, 29};
 long mils;
 boolean firstSetup = true;
 
-#define FMODE_Disabled -1
+#define FMODE_Disabled 10
 #define FMODE_Rest 0
 #define FMODE_Touch 1
 #define FMODE_Motor 2
@@ -52,7 +52,7 @@ void Fader::setup(byte index){
   pinMode(this->motorPinA, OUTPUT);
   pinMode(this->motorPinB, OUTPUT);
   pinMode(this->readPin, INPUT_PULLUP);
-
+  Serial.println(analogRead(this->readPin));
   if(analogRead(this->readPin)>4085){
     setMode(FMODE_Disabled);
   }
@@ -206,10 +206,14 @@ int Fader::getPosition(){
   
 }
 void Fader::pause(){
-  setMode(FMODE_Pause);
+  if(this->mode!=FMODE_Disabled){
+    setMode(FMODE_Pause);
+  }
 }
 void Fader::unpause(){
-  setMode(FMODE_Rest);
+  if(this->mode!=FMODE_Disabled){
+    setMode(FMODE_Rest);
+  }
 }
 void Fader::updateChannel(){
   this->channel = globalFaderChannels[this->index+8*globalPage];
