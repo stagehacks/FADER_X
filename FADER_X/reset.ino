@@ -151,12 +151,12 @@ void factoryReset(){
 
   EEPROM.write(8, 0);
   EEPROM.write(9, 8);
-  EEPROM.write(10, 1);
+  EEPROM.write(10, 2);
 
   EEPROM.put(14, defaultMessageWaitMillis); // Message wait (16 bit)
   EEPROM.write(16, defaultMotorMinSpeed); // Motor Min Speed
   EEPROM.write(17, defaultMotorScaleFactor); // Motor Scale Factor
-  EEPROM.write(18, defaultMotorFrequency); // Motor Drive Frequency
+  EEPROM.put(18, defaultMotorFrequency); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
   EEPROM.write(21, 2); // Motherboard Revision
 
