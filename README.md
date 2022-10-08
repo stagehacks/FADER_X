@@ -121,6 +121,11 @@ In broad strokes, here's how to reprogram the Teensy 4.1 inside a FADER_X using 
 
 &nbsp;
 
+# Troubleshooting
+The FADER_X Device will periodically print its IP Address and other useful troubleshooting data to a monitoring application on a host PC connected via USB cable. The Teensyduino Serial Monitor is a suitable free way to view this information, as is the excellent [Serial](https://www.decisivetactics.com/products/serial/) app for macOS. The Serial connection is 9600 baud.
+
+&nbsp;
+
 # Hardware Tuning
 The physical resistance to touch on a fader can be dgusted using the following procedure.
 1) Remove the front cover of the FADER_X using a M2.5 hex tool
