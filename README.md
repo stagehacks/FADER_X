@@ -19,6 +19,8 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 - Advanced motion easing for motorized fader moves
 - Custom OSC library
 
+Download the latest FADER_X firmware on the [Releases](https://github.com/stagehacks/FADER_X/releases) page.
+
 &nbsp;
 
 &nbsp;
