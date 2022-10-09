@@ -3,7 +3,7 @@
 # 🎚FADER_X
 <img align="right" width="50%" src="https://user-images.githubusercontent.com/919746/194739740-1c61ea77-3ebf-4fb3-a23e-a366f80e08b2.png">
 
-Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
+Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store). Download the latest FADER_X firmware on the [Releases](https://github.com/stagehacks/FADER_X/releases) page.
 
 ## Supports
 - Generic MIDI
@@ -18,8 +18,6 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 - Up to 4 pages/banks of faders
 - Advanced motion easing for motorized fader moves
 - Custom OSC library
-
-Download the latest FADER_X firmware on the [Releases](https://github.com/stagehacks/FADER_X/releases) page.
 
 &nbsp;
 
