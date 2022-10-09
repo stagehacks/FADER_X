@@ -129,7 +129,7 @@ The FADER_X Device will periodically print its IP Address and other useful troub
 # Hardware Tuning
 The physical resistance to touch on a fader can be dgusted using the following procedure.
 1) Remove the front cover of the FADER_X using a M2.5 hex tool
-2) For each fader to adjust, slightly loosen the screws holding the motor to the metal channel.
+2) For each fader to adjust, slightly loosen the screws holding the motor to the metal channel. Use a Phillips 0 or 00 screwdriver.
 3) Adjust the motor's position to suit, then tighten the screws.
 
 Changing the tension on the faders may require adustment of the `Minimum Speed` parameter in the configuration web app.
