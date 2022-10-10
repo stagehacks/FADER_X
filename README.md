@@ -57,6 +57,7 @@ On FADER_X Configuration web app
 - Connects to the console via UDP OSC. 
 - Configure `OSC Destination Port` parameter to match QLab. QLab's default listening port is `53000`.
 - QLab always replies on port `53001`.
+- QLab's main fader is Channel 0, so make sure to include that on your fader page(s).
 
 | Parameter | Factory Value |  |
 | ---- | ---- | ---- |
