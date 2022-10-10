@@ -158,7 +158,11 @@ void factoryReset(){
   EEPROM.write(17, defaultMotorScaleFactor); // Motor Scale Factor
   EEPROM.put(18, defaultMotorFrequency); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
-  EEPROM.write(21, 2); // Motherboard Revision
+
+  byte mb = EEPROM.read(21);
+  if(mb!=1 && mb!=2){
+    EEPROM.write(21, 2); // Motherboard Revision
+  }
 
   EEPROM.write(24, 1); // Op Mode
 
