@@ -116,15 +116,16 @@ void QLab::parseOSC(OSCMessage msgIn){
     if(msgIn.getString(0).indexOf("\"status\":\"ok\"")==1){
       String levels = jsonDataObject(msgIn.getString(0));
       int c = 1;
-      for(byte i=0; i<16; i++){
+      
+      for(byte i=0; i<65; i++){
         float val = levels.substring(c, levels.indexOf(",", c)).toFloat();
         c = levels.indexOf(",", c) + 1;
-        audioLevels[i] = val;
-        this->faderTargetsOSC[i] = audioLevelToFader(audioLevels[i]);
+        this->faderTargetsOSC[i] = audioLevelToFader(val);
         if(!this->doMidiBehavior()){
           setFaderTarget(i, this->faderTargetsOSC[i]);
         }
       }
+      
     }else if(!this->doMidiBehavior()){
       for(byte i=0; i<255; i++){
         setFaderTarget(i, 0);
