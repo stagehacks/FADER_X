@@ -29,7 +29,7 @@ class QLab {
     boolean autoMidi = false;
     int maximumVolume = 12;
     int minimumVolume = 60;
-    int faderTargetsOSC[64];
+    int faderTargetsOSC[65];
     int faderTargetsMIDI[128];
     
 };
