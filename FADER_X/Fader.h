@@ -32,7 +32,7 @@ class Fader {
     void unpause();
     void tick();
     void setTarget(int position);
-    void setMode(byte m);
+    void setMode(int m);
     void updateChannel();
     int getPositionTrimmed();
     int getPosition();
