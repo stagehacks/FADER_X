@@ -11,7 +11,6 @@ using namespace qindesign::network;
 class QLab {
   private:
     EthernetUDP udp;
-    float audioLevels[32];
     
 
   public:
