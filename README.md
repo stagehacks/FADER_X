@@ -3,7 +3,7 @@
 # 🎚FADER_X
 <img align="right" width="50%" src="https://user-images.githubusercontent.com/919746/194739740-1c61ea77-3ebf-4fb3-a23e-a366f80e08b2.png">
 
-Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store).
+Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks](https://www.stagehacks.com/store). Download the latest FADER_X firmware on the [Releases](https://github.com/stagehacks/FADER_X/releases) page.
 
 ## Supports
 - Generic MIDI
@@ -129,7 +129,7 @@ The FADER_X Device will periodically print its IP Address and other useful troub
 # Hardware Tuning
 The physical resistance to touch on a fader can be dgusted using the following procedure.
 1) Remove the front cover of the FADER_X using a M2.5 hex tool
-2) For each fader to adjust, slightly loosen the screws holding the motor to the metal channel.
+2) For each fader to adjust, slightly loosen the screws holding the motor to the metal channel. Use a Phillips 0 or 00 screwdriver.
 3) Adjust the motor's position to suit, then tighten the screws.
 
 Changing the tension on the faders may require adustment of the `Minimum Speed` parameter in the configuration web app.
