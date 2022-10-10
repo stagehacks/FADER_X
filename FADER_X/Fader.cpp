@@ -24,7 +24,7 @@ static byte PINS_2_B[8] = {0, 3, 4, 7, 8, 12, 37, 29};
 long mils;
 boolean firstSetup = true;
 
-#define FMODE_Disabled 10
+#define FMODE_Disabled -1
 #define FMODE_Rest 0
 #define FMODE_Touch 1
 #define FMODE_Motor 2
@@ -155,11 +155,9 @@ void Fader::motorLoop(){
     this->lastStartPosition = this->getPosition();
   }
   prevTarget = target;
-  
 
-  if(mils-this->lastModeStart > max(this->easeSpeed+100, globalMessageWaitMillis)){
+  if(mils-this->lastModeStart > max(this->easeSpeed+200, globalMessageWaitMillis)){
     setMode(FMODE_Rest);
-    globalFaderTargets[this->channel] = this->getPosition();
 
   }else{
     int distance = target-this->getPosition();
@@ -224,7 +222,9 @@ byte Fader::getChannel(){
 int Fader::getMode(){
   return this->mode;
 }
-void Fader::setMode(byte m){
+void Fader::setMode(int m){
+  if(this->mode != m){
+    this->lastModeStart = millis();
+  }
   this->mode = m;
-  this->lastModeStart = millis();
 }
