@@ -90,7 +90,7 @@ On FADER_X Configuration web app
 &nbsp;
 
 # Selecting the Page
-As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`.
+As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
 
 ---
 
