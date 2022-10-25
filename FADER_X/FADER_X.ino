@@ -65,7 +65,7 @@ void setup() {
   delay(100);
   Serial.println("Powered On");
 
-  if(EEPROM.read(0)!='F' || EEPROM.read(8)!=0 || EEPROM.read(9)!=8 || EEPROM.read(10)!=4){
+  if(EEPROM.read(0)!='F' || EEPROM.read(8)!=0 || EEPROM.read(9)!=8 || EEPROM.read(10)!=5){
     Serial.println("Factory Reset");
     factoryReset();
   }
