@@ -52,7 +52,9 @@ void Fader::setup(byte index){
   pinMode(this->motorPinA, OUTPUT);
   pinMode(this->motorPinB, OUTPUT);
   pinMode(this->readPin, INPUT_PULLUP);
-  Serial.println(analogRead(this->readPin));
+  
+  //Serial.println(analogRead(this->readPin));
+  
   if(analogRead(this->readPin)>4085){
     setMode(FMODE_Disabled);
   }
@@ -93,7 +95,7 @@ void Fader::loop(){
       if(abs(this->rawPosition-analogRead(this->readPin))>40){
         setMode(FMODE_Touch); 
         
-      }else if(distanceToTarget>15){
+      }else if(distanceToTarget>10){
         setMode(FMODE_Motor);
         this->lastMotorEvent = mils;
         this->lastStartPosition = this->getPosition();
