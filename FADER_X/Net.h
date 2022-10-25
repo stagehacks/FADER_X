@@ -32,4 +32,5 @@ class Net {
     int netMode = 0;
     unsigned short IP_SelfPort = 0;
     unsigned short IP_DestinationPort = 0;
+    boolean linkOn = false;
 };

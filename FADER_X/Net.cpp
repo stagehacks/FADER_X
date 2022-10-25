@@ -4,6 +4,7 @@
 using namespace qindesign::network;
 
 extern EthernetServer globalWebServer;
+extern Net net;
 
 void Net::setup(){
   Ethernet.macAddress(this->macAddress);
@@ -12,10 +13,12 @@ void Net::setup(){
     Serial.print("Ethernet Link state changed to ");
     Serial.println(state ? "ON":"OFF");
     randomSeed(millis()); 
+    net.linkOn = state;
+    
   });
 
   Ethernet.onAddressChanged([]() {
-    Serial.println("Ethernet Address changed"); 
+    Serial.println("Ethernet Address changed");
   });
 
   Serial.println("Beginning Ethernet");
@@ -42,7 +45,7 @@ void Net::setup(){
 
     delay(100);
     globalWebServer.begin();
-    Serial.print("Started Web Server ");
+    Serial.println("Started Web Server");
     
   }
   
