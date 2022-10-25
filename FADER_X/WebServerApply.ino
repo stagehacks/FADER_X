@@ -101,6 +101,8 @@ boolean applySettings(EthernetClient*client, String*b){
 
   int e1 = containsParam(b, "e1");
   int e2 = containsParam(b, "e2");
+
+  int x1 = containsParam(b, "x1");
   
   // Motor Settings
 
@@ -294,6 +296,17 @@ boolean applySettings(EthernetClient*client, String*b){
 
   if(e1){ EEPROM.write(140, getParameter(b, e1).toInt()); }
   if(e2){ EEPROM.write(141, getParameter(b, e2).toInt()); }
+
+  // X32/M32 Settings
+
+  if(x1){
+    byte val = getParameter(b, x1).toInt();
+    if(val>=1 && val<=6){
+      EEPROM.write(150, getParameter(b, x1).toInt());
+    }else{
+      EEPROM.write(150, 1);
+    }
+  }
 
   // Channels
   

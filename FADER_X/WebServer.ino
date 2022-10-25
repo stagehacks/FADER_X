@@ -120,6 +120,17 @@ String bodyTemplate = "<body>"
   "<tr><td>Fader Count</td><td><input value='{eos-count}' type='number' name='e2' min='1' max='255'></td><td></td></tr>"
 "</table>"
 "<table class='block'>"
+  "<tr><th colspan='3'>X32/M32</th></tr>"
+  "<tr><td>Target</td><td><select name='x1'>"
+    "<option value='1' {x1-1}>Channel</option>"
+    "<option value='2' {x1-2}>DCA</option>"
+    "<option value='3' {x1-3}>Bus</option>"
+    "<option value='4' {x1-4}>Aux In</option>"
+    "<option value='5' {x1-5}>FX Return</option>"
+    "<option value='6' {x1-6}>Matrix</option>"
+  "</select></td><td></td></tr>"
+"</table>"
+"<table class='block'>"
   "<tr><th colspan='3'>Fader Tuning</th></tr>"
   "<tr><td>Message wait</td><td><input value='{msg-wait}' type='number' name='t0'</td><td class='note'>Milliseconds to wait between sending OSC or MIDI messages</td></tr></tr>"
   "<tr><td>Minimum Speed</td><td><input value='{min-speed}' type='number' name='t1'></td><td class='note'>Minimum PWM speed of motors</td></tr>"
@@ -389,6 +400,15 @@ void generateIndex(){
 
   temp.replace("{eos-bank}", eos.faderBank);
   temp.replace("{eos-count}", eos.faderCount);
+
+  switch(EEPROM.read(150)){
+    case 1:temp.replace("{x1-1}", "selected");break;
+    case 2:temp.replace("{x1-2}", "selected");break;
+    case 3:temp.replace("{x1-3}", "selected");break;
+    case 4:temp.replace("{x1-4}", "selected");break;
+    case 5:temp.replace("{x1-5}", "selected");break;
+    case 6:temp.replace("{x1-6}", "selected");break;
+  }
 
   switch(EEPROM.read(24)){
     case 1:temp.replace("{op-1}", "selected");break;
