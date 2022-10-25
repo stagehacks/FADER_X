@@ -78,6 +78,8 @@ void newSettings(){
   eos.faderBank = EEPROM.read(140);
   eos.faderCount = EEPROM.read(141);
 
+  x32.xTarget = EEPROM.read(150);
+
   // Net
   net.loadEEPROM();
   net.setup();
@@ -151,7 +153,7 @@ void factoryReset(){
 
   EEPROM.write(8, 0);
   EEPROM.write(9, 8);
-  EEPROM.write(10, 3);
+  EEPROM.write(10, 4);
 
   EEPROM.put(14, defaultMessageWaitMillis); // Message wait (16 bit)
   EEPROM.write(16, defaultMotorMinSpeed); // Motor Min Speed
