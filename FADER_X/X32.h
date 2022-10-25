@@ -10,10 +10,9 @@ using namespace qindesign::network;
 class X32 {
   private:
     EthernetUDP udp;
-    boolean subscribed;
-    long lastSubscription;
     char buf[Ethernet.mtu() - 20 - 8];
-
+    void initialRequest();
+    
   public:
     void setup();
     void loop();
@@ -21,6 +20,8 @@ class X32 {
     void touchEvent(int channel, Fader *fader);
     void processOSC(OSCMessage msg);
     void updateSubscription();
+
+    byte xTarget = 1;
 
 };
 
