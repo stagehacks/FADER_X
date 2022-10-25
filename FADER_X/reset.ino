@@ -152,8 +152,8 @@ void factoryReset(){
   EEPROM.write(7, 0);
 
   EEPROM.write(8, 0);
-  EEPROM.write(9, 8);
-  EEPROM.write(10, 5);
+  EEPROM.write(9, 9);
+  EEPROM.write(10, 0);
 
   EEPROM.put(14, defaultMessageWaitMillis); // Message wait (16 bit)
   EEPROM.write(16, defaultMotorMinSpeed); // Motor Min Speed
