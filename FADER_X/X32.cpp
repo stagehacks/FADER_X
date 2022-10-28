@@ -84,8 +84,8 @@ void X32::touchEvent(int channel, Fader *fader){
 void X32::processOSC(OSCMessage msg){
   String oscAddr = msg.getAddress();
 
-  Serial.print("revd: ");
-  Serial.println(oscAddr);
+//  Serial.print("revd: ");
+//  Serial.println(oscAddr);
 
   if(xTarget == 1 && msg.match("/ch/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
@@ -180,8 +180,8 @@ void X32::initialRequest(){
 
 
   if(oscStr!="" && globalFaderChannels[initialIndex]>0){
-    Serial.print("sent: ");
-    Serial.println(oscStr);
+    //Serial.print("sent: ");
+    //Serial.println(oscStr);
     OSCMessage msg(oscStr);
     udp.beginPacket(net.IP_Destination, 10023);
     msg.writeUDP(&udp);
