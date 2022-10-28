@@ -92,10 +92,11 @@ void Fader::loop(){
   switch(this->mode){
     
     case FMODE_Rest:
-      if(abs(this->rawPosition-analogRead(this->readPin))>40){
+      
+      if(abs(this->rawPosition-analogRead(this->readPin))>128){
         setMode(FMODE_Touch); 
         
-      }else if(distanceToTarget>10){
+      }else if(distanceToTarget>30){
         setMode(FMODE_Motor);
         this->lastMotorEvent = mils;
         this->lastStartPosition = this->getPosition();
