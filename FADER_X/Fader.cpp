@@ -156,6 +156,7 @@ void Fader::motorLoop(){
   if(prevTarget!=target){
     setMode(FMODE_Motor);
     this->lastStartPosition = this->getPosition();
+    this->lastModeStart = mils;
   }
   prevTarget = target;
 
