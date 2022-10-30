@@ -10,6 +10,10 @@
 #include <Bounce2.h>
 using namespace qindesign::network;
 
+#define MAJOR 0
+#define SUBVERSION 9
+#define PATCH 1
+
 EthernetServer globalWebServer(80);
 EthernetUDP globalUDP;
 Bounce button1 = Bounce();
@@ -65,10 +69,11 @@ void setup() {
   delay(100);
   Serial.println("Powered On");
 
-  if(EEPROM.read(0)!='F' || EEPROM.read(8)!=0 || EEPROM.read(9)!=9 || EEPROM.read(10)!=0){
+  if(EEPROM.read(0)!='F' || EEPROM.read(8)!=MAJOR || EEPROM.read(9)!=SUBVERSION){
     Serial.println("Factory Reset");
     factoryReset();
   }
+  EEPROM.write(10, PATCH);
 
   pinMode(33, INPUT_PULLUP);
   button1.attach(33);
