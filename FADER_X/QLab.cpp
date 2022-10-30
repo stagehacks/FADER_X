@@ -22,6 +22,7 @@ void parseMIDI(byte channel, byte fader, byte value) {
 void QLab::setup(){
   usbMIDI.setHandleControlChange(parseMIDI);
   this->udp.begin(53001);
+  Serial.println("QLab started");
 }
 
 String jsonDataObject(String json){
@@ -60,20 +61,15 @@ void QLab::loop(){
 
   if(sincePlaybackPositionChanged>200 && sincePlaybackPositionChanged<250){
     sincePlaybackPositionChanged = 250;
-    
-    OSCMessage msg("/cue/selected/sliderLevels");
-    udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
-    msg.writeUDP(&udp);
-    udp.endPacket();
 
     OSCMessage msg1("/cue/selected/type");
     udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
     msg1.writeUDP(&udp);
     udp.endPacket();
+    
   }
   
 }
-
 
 void QLab::parseOSC(OSCMessage msgIn){
   String oscAddr = msgIn.getAddress();
@@ -132,20 +128,29 @@ void QLab::parseOSC(OSCMessage msgIn){
       }
     }
     
-  }else if(msgIn.match("/reply/cue/selected/type") && this->autoMidi){
+  }else if(msgIn.match("/reply/cue/selected/type")){
     String cueType = jsonDataObject(msgIn.getString(0));
+
     if(cueType=="\"Audio\"" || cueType=="\"Video\"" || cueType=="\"Fade\"" || cueType=="\"Mic\"" || cueType=="\"Camera\""){
-      if(globalPage>1){
+      OSCMessage msg("/cue/selected/sliderLevels");
+      udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
+      msg.writeUDP(&udp);
+      udp.endPacket();
+      
+      if(globalPage>1 && this->autoMidi){
         globalPage-=2;
         this->changePage();
         channelUpdateAll();
       }
-    }else if(globalPage<2){
+    }else if(globalPage<2 && this->autoMidi){
       globalPage+=2;
       this->changePage();
       channelUpdateAll();
     }
+
+
   }
+    
 }
 
 void QLab::touchEvent(int channel, Fader *fader){
