@@ -17,6 +17,7 @@ class Fader {
     int lastTouchValue = 0;
     int lastStartPosition = 0;
     int easeSpeed = 0;
+    int lastTarget = 0;
  
   public:
     Fader(int r, int realIndex);    

@@ -74,20 +74,25 @@ void Fader::setup(byte index){
 void Fader::loop(){
   if(this->mode == FMODE_Disabled){ return; }
   mils = millis();
+
+  int target = globalFaderTargets[this->channel];
   
   if(mils-globalLastBoot < 100){
     this->rawPosition = analogRead(this->readPin);
-    globalFaderTargets[this->channel] = this->getPosition();
+    target = this->getPosition();
     return;
   }
-  
-  int distanceToTarget = abs(this->getPosition()-globalFaderTargets[this->channel]);
-  if(globalFaderTargets[this->channel]==0 && this->getPosition()<0){
+
+
+  int distanceToTarget = abs(this->getPosition()-target);
+  if(target==0 && this->getPosition()<0){
     distanceToTarget = 0;
   }
-  if(globalFaderTargets[this->channel]==1023 && this->getPosition()>1023){
+  if(target==1023 && this->getPosition()>1023){
     distanceToTarget = 0;
   }
+
+
 
   switch(this->mode){
     
@@ -96,7 +101,7 @@ void Fader::loop(){
       if(abs(this->rawPosition-analogRead(this->readPin))>128){
         setMode(FMODE_Touch); 
         
-      }else if(distanceToTarget>30){
+      }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){
         setMode(FMODE_Motor);
         this->lastMotorEvent = mils;
         this->lastStartPosition = this->getPosition();
@@ -126,6 +131,8 @@ void Fader::loop(){
     
   }
 
+  this->lastTarget = target;
+
 }
 
 
@@ -146,19 +153,11 @@ void Fader::touchLoop(){
   
 }
 
-int prevTarget = 0;
 void Fader::motorLoop(){
 
   int target = globalFaderTargets[this->channel];
   this->easeSpeed = 100+abs(target-this->lastStartPosition)/2;
   ease.duration(this->easeSpeed);
-   
-  if(prevTarget!=target){
-    setMode(FMODE_Motor);
-    this->lastStartPosition = this->getPosition();
-    this->lastModeStart = mils;
-  }
-  prevTarget = target;
 
   if(mils-this->lastModeStart > max(this->easeSpeed+200, globalMessageWaitMillis)){
     setMode(FMODE_Rest);
@@ -227,8 +226,6 @@ int Fader::getMode(){
   return this->mode;
 }
 void Fader::setMode(int m){
-  if(this->mode != m){
-    this->lastModeStart = millis();
-  }
+  this->lastModeStart = millis();
   this->mode = m;
 }
