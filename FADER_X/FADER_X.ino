@@ -221,25 +221,25 @@ void setFaderTarget(byte index, int value){
 }
 
 void serialHeartbeat(){
-//  Serial.print("FADER_X VERSION ");
-//  Serial.print(versionMajor);
-//  Serial.print(".");
-//  Serial.print(versionMinor);
-//  Serial.print(".");
-//  Serial.println(versionSub);
-//  
-//  Serial.print("IP Address = ");
-//  Serial.print(net.IP_Static[0]);
-//  Serial.print(".");
-//  Serial.print(net.IP_Static[1]);
-//  Serial.print(".");
-//  Serial.print(net.IP_Static[2]);
-//  Serial.print(".");
-//  Serial.println(net.IP_Static[3]);
-//
-//  Serial.print("Operation Mode = ");
-//  Serial.println(globalMode);
-//
-//  Serial.print("Motherboard Revision = ");
-//  Serial.println(globalMotherboardRevision);
+  Serial.print("FADER_X VERSION ");
+  Serial.print(versionMajor);
+  Serial.print(".");
+  Serial.print(versionMinor);
+  Serial.print(".");
+  Serial.println(versionSub);
+  
+  Serial.print("IP Address = ");
+  Serial.print(net.IP_Static[0]);
+  Serial.print(".");
+  Serial.print(net.IP_Static[1]);
+  Serial.print(".");
+  Serial.print(net.IP_Static[2]);
+  Serial.print(".");
+  Serial.println(net.IP_Static[3]);
+
+  Serial.print("Operation Mode = ");
+  Serial.println(globalMode);
+
+  Serial.print("Motherboard Revision = ");
+  Serial.println(globalMotherboardRevision);
 }
