@@ -1,9 +1,9 @@
 #include "MIDI.h"
 
-extern int globalFaderTargets[255];
+extern void setFaderTarget(byte index, int value);
 
 void midiCCHandle(byte channel, byte fader, byte value) {
-  globalFaderTargets[fader] = value*8;
+  setFaderTarget(fader, value*8);
 }
 
 void Midi::setup(){
@@ -15,6 +15,5 @@ void Midi::loop(){
 }
 
 void Midi::touchEvent(int channel, Fader *fader){
-  //Serial.println("midi touch");
   usbMIDI.sendControlChange(channel, fader->getPositionTrimmed()/8, this->sendChannel);
 }
