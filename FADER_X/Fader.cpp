@@ -98,7 +98,7 @@ void Fader::loop(){
     
     case FMODE_Rest:
       
-      if(abs(this->rawPosition-analogRead(this->readPin))>128){
+      if(abs(this->rawPosition-analogRead(this->readPin))>8){
         setMode(FMODE_Touch); 
         
       }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){
@@ -119,6 +119,11 @@ void Fader::loop(){
 
 
     case FMODE_Motor:
+      if(this->lastTarget!=target){
+        setMode(FMODE_Motor);
+        this->lastMotorEvent = mils;
+        this->lastStartPosition = this->getPosition();
+      }
       this->rawPosition = analogRead(this->readPin);
       this->motorLoop();
       break;
@@ -141,6 +146,7 @@ void Fader::touchLoop(){
   if(abs(globalFaderTargets[this->channel]-this->getPosition())>1 && mils-this->lastTouchEvent>globalMessageWaitMillis){
     globalFaderTargets[this->channel] = this->getPosition();
     this->lastTouchEvent = mils;
+    Serial.println(this->getPosition());
     touchEvent(this);
   }
   
