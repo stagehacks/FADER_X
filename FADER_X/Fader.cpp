@@ -98,7 +98,7 @@ void Fader::loop(){
     
     case FMODE_Rest:
       
-      if(abs(this->rawPosition-analogRead(this->readPin))>8){
+      if(abs(this->rawPosition-analogRead(this->readPin))>128){
         setMode(FMODE_Touch); 
         
       }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){
