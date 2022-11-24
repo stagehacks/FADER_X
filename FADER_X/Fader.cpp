@@ -139,7 +139,7 @@ void Fader::loop(){
 void Fader::touchLoop(){
   int pos = this->getPosition();
 
-  // constant flutter between 2 values if distance is less than 3
+  // constant flutter between 2 values if distance check is less than 3
   if(abs(globalFaderTargets[this->channel]-pos)>3 && mils-this->lastTouchEvent>globalMessageWaitMillis){
     globalFaderTargets[this->channel] = pos;
     this->lastTouchEvent = mils;
@@ -233,25 +233,25 @@ int Fader::getMode(){
   return this->mode;
 }
 void Fader::setMode(int m){
-  Serial.print("---------- mode ");
+  // Serial.print("---------- mode ");
 
-  switch(m) {
-    case FMODE_Disabled:
-      Serial.println("Disabled");
-      break;
-    case FMODE_Rest:
-      Serial.println("Rest");
-      break;
-    case FMODE_Touch:
-        Serial.println("Touch");
-      break;
-    case FMODE_Motor:
-        Serial.println("Motor");
-      break;
-    case FMODE_Pause:
-        Serial.println("Pause");
-      break;
-  }
+  // switch(m) {
+  //   case FMODE_Disabled:
+  //     Serial.println("Disabled");
+  //     break;
+  //   case FMODE_Rest:
+  //     Serial.println("Rest");
+  //     break;
+  //   case FMODE_Touch:
+  //       Serial.println("Touch");
+  //     break;
+  //   case FMODE_Motor:
+  //       Serial.println("Motor");
+  //     break;
+  //   case FMODE_Pause:
+  //       Serial.println("Pause");
+  //     break;
+  // }
   this->lastModeStart = millis();
   this->mode = m;
 }
