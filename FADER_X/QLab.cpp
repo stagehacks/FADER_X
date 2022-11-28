@@ -83,8 +83,16 @@ void QLab::parseOSC(OSCMessage msgIn){
     int e = json.indexOf("\",\"", s);
     String workspace = json.substring(s + 11, e);
 
+    char passBuf[8];
+    for(byte i=0; i<8; i++){
+      passBuf[i] = EEPROM.read(132+i);
+    }
+    String passcode = String(passBuf);
+
     OSCMessage msg1("/workspace/"+workspace+"/connect");
-    msg1.addString("5353");
+    if(passcode.length()>0){
+      msg1.addString(passcode);
+    }
     udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
     msg1.writeUDP(&udp);
     udp.endPacket();
