@@ -108,7 +108,7 @@ void QLab::parseOSC(OSCMessage msgIn){
   }else if(msgIn.match("/update/workspace/*/cue_id/*")){
     sincePlaybackPositionChanged = 100;
 
-  }else if(msgIn.match("/reply/cue/selected/sliderLevels")){
+  }else if(msgIn.match("/reply/*/*/sliderLevels")){ // wildcard necessary because QLab 4 and 5 send different replies
     if(msgIn.getString(0).indexOf("\"status\":\"ok\"")==1){
       String levels = jsonDataObject(msgIn.getString(0));
       int c = 1;
@@ -127,8 +127,8 @@ void QLab::parseOSC(OSCMessage msgIn){
         setFaderTarget(i, 0);
       }
     }
-    
-  }else if(msgIn.match("/reply/cue/selected/type")){
+
+  }else if(msgIn.match("/reply/*/*/type")){ // wildcard necessary because QLab 4 and 5 send different replies
     String cueType = jsonDataObject(msgIn.getString(0));
 
     if(cueType=="\"Audio\"" || cueType=="\"Video\"" || cueType=="\"Fade\"" || cueType=="\"Mic\"" || cueType=="\"Camera\""){
