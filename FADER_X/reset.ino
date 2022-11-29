@@ -16,7 +16,7 @@ void newSettings(){
     globalFaderChannels[i] = EEPROM.read(66+i);
   }
   for(byte i=0; i<255; i++){
-    globalFaderTargets[i] = 500;
+    globalFaderTargets[i] = 0;
   }
   
   globalRotated = EEPROM.read(20)==1;
@@ -39,6 +39,17 @@ void newSettings(){
     fader7.setup(6);
     fader8.setup(7);
   }
+
+  delay(10);
+
+  fader1.setTargetToCurrentPosition();
+  fader2.setTargetToCurrentPosition();
+  fader3.setTargetToCurrentPosition();
+  fader4.setTargetToCurrentPosition();
+  fader5.setTargetToCurrentPosition();
+  fader6.setTargetToCurrentPosition();
+  fader7.setTargetToCurrentPosition();
+  fader8.setTargetToCurrentPosition();
   
 
   // MIDI

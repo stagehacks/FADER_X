@@ -64,7 +64,6 @@ void Fader::setup(byte index){
 
   this->index = index;
   this->updateChannel();
-  this->rawPosition = analogRead(this->readPin);
 
   ease.duration(EaseSpeed);
 }
@@ -148,18 +147,10 @@ void Fader::touchLoop(){
   if(abs(globalFaderTargets[this->channel]-pos)>3 && mils-this->lastTouchEvent>globalMessageWaitMillis){
     globalFaderTargets[this->channel] = pos;
     this->lastTouchEvent = mils;
-    Serial.println(this->getPosition());
     touchEvent(this);
   }
   
-  // checking against 'lastModeStart' prevents a slow (1+ second) up/down fade
-  // since it forces Rest mode after 300ms
-  // // if(mils-this->lastTouchEvent > globalMessageWaitMillis*2 || mils-this->lastModeStart>300){ // tail debounce when after touching the fader
-  // //   globalFaderTargets[this->channel] = this->getPosition();
   if(mils-this->lastTouchEvent > 300){ 
-    // at this point, the fader hasn't moved since the last update
-    // // globalFaderTargets[this->channel] = pos;
-    // // touchEvent(this);
     setMode(FMODE_Rest);
     
   }
@@ -239,25 +230,29 @@ int Fader::getMode(){
   return this->mode;
 }
 void Fader::setMode(int m){
-  // Serial.print("---------- mode ");
+//   Serial.print("---------- mode ");
 
-  // switch(m) {
-  //   case FMODE_Disabled:
-  //     Serial.println("Disabled");
-  //     break;
-  //   case FMODE_Rest:
-  //     Serial.println("Rest");
-  //     break;
-  //   case FMODE_Touch:
-  //       Serial.println("Touch");
-  //     break;
-  //   case FMODE_Motor:
-  //       Serial.println("Motor");
-  //     break;
-  //   case FMODE_Pause:
-  //       Serial.println("Pause");
-  //     break;
-  // }
+//   switch(m) {
+//     case FMODE_Disabled:
+//       Serial.println("Disabled");
+//       break;
+//     case FMODE_Rest:
+//       Serial.println("Rest");
+//       break;
+//     case FMODE_Touch:
+//         Serial.println("Touch");
+//       break;
+//     case FMODE_Motor:
+//         Serial.println("Motor");
+//       break;
+//     case FMODE_Pause:
+//         Serial.println("Pause");
+//       break;
+//   }
   this->lastModeStart = millis();
   this->mode = m;
+}
+void Fader::setTargetToCurrentPosition(){
+  this->rawPosition = analogRead(this->readPin);
+  globalFaderTargets[this->channel] = this->getPosition();
 }
