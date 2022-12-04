@@ -10,8 +10,8 @@
 #include <Bounce2.h>
 using namespace qindesign::network;
 
-#define MAJOR 0
-#define SUBVERSION 1
+#define MAJOR 1
+#define SUBVERSION 0
 #define PATCH 0
 
 EthernetServer globalWebServer(80);
