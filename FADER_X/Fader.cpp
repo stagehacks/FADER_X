@@ -8,6 +8,7 @@ extern int globalFaderTargets[255];
 extern byte globalFaderChannels[32];
 extern void touchEvent(Fader* fader);
 
+extern byte globalTouchSensitivity;
 extern unsigned short globalMessageWaitMillis;
 extern int globalMotorMinSpeed;
 extern int globalMotorSpeedScale;
@@ -97,7 +98,7 @@ void Fader::loop(){
     
     case FMODE_Rest:
       
-      if(abs(this->rawPosition-analogRead(this->readPin))>128){
+      if(abs(this->rawPosition-analogRead(this->readPin))>globalTouchSensitivity){
         setMode(FMODE_Touch); 
         
       }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){

@@ -6,6 +6,7 @@ void newSettings(){
   versionSub = EEPROM.read(10);
 
   EEPROM.get(14, globalMessageWaitMillis);
+  globalTouchSensitivity = EEPROM.read(22);
   globalMode = EEPROM.read(24);
   globalMotorMinSpeed = EEPROM.read(16);
   globalMotorSpeedScale = EEPROM.read(17);
@@ -171,11 +172,20 @@ void factoryReset(){
   EEPROM.write(17, defaultMotorScaleFactor); // Motor Scale Factor
   EEPROM.put(18, defaultMotorFrequency); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
-
+  
   byte mb = EEPROM.read(21);
+  
+  if(mb==2){
+    EEPROM.write(22, 10); // Touch Sensitivity
+  }else{
+    EEPROM.write(22, 128); // Touch Sensitivity
+  }
+  
   if(mb!=1 && mb!=2){
     EEPROM.write(21, 2); // Motherboard Revision
   }
+
+  
 
   EEPROM.write(24, 1); // Op Mode
 
