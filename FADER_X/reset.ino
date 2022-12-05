@@ -186,8 +186,8 @@ void factoryReset(){
   
   byte mb = EEPROM.read(21);
   
-  if(mb==2){
-    EEPROM.write(22, 10); // Touch Sensitivity
+  if(mb==2 || mb==3){
+    EEPROM.write(22, 16); // Touch Sensitivity
   }else{
     EEPROM.write(22, 128); // Touch Sensitivity
   }
