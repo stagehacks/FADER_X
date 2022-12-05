@@ -65,6 +65,7 @@ void Fader::setup(byte index){
   this->index = index;
   this->updateChannel();
   this->rawPosition = analogRead(this->readPin);
+  globalFaderTargets[this->channel] = this->getPosition();
 
   ease.duration(EaseSpeed);
 }
@@ -98,8 +99,9 @@ void Fader::loop(){
     
     case FMODE_Rest:
       
-      if(abs(this->rawPosition-analogRead(this->readPin))>128){
-        setMode(FMODE_Touch); 
+      if(abs(this->rawPosition-analogRead(this->readPin))>12){
+        setMode(FMODE_Touch);
+        
         
       }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){
         setMode(FMODE_Motor);
@@ -143,14 +145,14 @@ void Fader::loop(){
 
 void Fader::touchLoop(){
   
-  if(abs(globalFaderTargets[this->channel]-this->getPosition())>1 && mils-this->lastTouchEvent>globalMessageWaitMillis){
+  if(abs(globalFaderTargets[this->channel]-this->getPosition())>2 && mils-this->lastTouchEvent>globalMessageWaitMillis){
     globalFaderTargets[this->channel] = this->getPosition();
     this->lastTouchEvent = mils;
-    Serial.println(this->getPosition());
+    //Serial.println(this->getPosition());
     touchEvent(this);
   }
   
-  if(mils-this->lastTouchEvent > globalMessageWaitMillis*2 || mils-this->lastModeStart>300){ // tail debounce when after touching the fader
+  if(mils-this->lastTouchEvent > globalMessageWaitMillis*2){ // tail debounce when after touching the fader
     globalFaderTargets[this->channel] = this->getPosition();
     touchEvent(this);
     setMode(FMODE_Rest);
@@ -234,4 +236,28 @@ int Fader::getMode(){
 void Fader::setMode(int m){
   this->lastModeStart = millis();
   this->mode = m;
+
+  Serial8.print('T');
+  Serial8.print(String(this->realIndex));
+  if(m==FMODE_Touch){
+    Serial8.println("@1");
+  }else{
+    Serial8.println("@0");
+  }
+}
+
+void Fader::proLabel(String text){
+  Serial8.print("L");
+  Serial8.print(this->realIndex);
+  Serial8.print("/2");
+  Serial8.print("@");
+  Serial8.println(text);
+}
+
+void Encoder::proLabel(String text){
+  Serial8.print("L");
+  Serial8.print(this->realIndex);
+  Serial8.print("/1");
+  Serial8.print("@");
+  Serial8.println(text);
 }

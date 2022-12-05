@@ -56,6 +56,11 @@ byte versionMajor;
 byte versionMinor;
 byte versionSub;
 
+char serialBuf[16];
+byte serialIndex = 0;
+
+Encoder encoders[8];
+
 #define OP_Midi 1
 #define OP_Midi_NoMotor 2
 #define OP_QLab 3
@@ -66,6 +71,8 @@ byte versionSub;
 
 void setup() {
   Serial.begin(9600);
+  Serial8.begin(9600);
+  
   delay(100);
   Serial.println("Powered On");
 
@@ -83,8 +90,12 @@ void setup() {
   button2.attach(25);
   button2.interval(50);
   
-  
   analogReadResolution(11);
+
+  for(byte i=0; i<8; i++){
+    encoders[i].channel = i+1;
+    encoders[i].realIndex = i;
+  }
 }
 
 void loop() {
@@ -155,6 +166,28 @@ void loop() {
     serialHeartbeat();
   }
 
+
+  while (Serial8.available() > 0) {
+    char incomingByte = Serial8.read();
+
+    if(incomingByte == 0x0A){
+      if(serialBuf[0]=='K'){
+        String str = String(serialBuf);
+        byte i = String(serialBuf[1]).toInt();
+        int val1 = str.substring(str.indexOf("@")+1, str.indexOf(",")).toInt();
+        int val2 = str.substring(str.indexOf(",")+1).toInt();
+        knobEvent(i, val2, val1);
+      }
+      for(byte i=0; i<serialIndex; i++){
+        serialBuf[i] = 0;
+      }
+      serialIndex = 0;
+    }else{
+      serialBuf[serialIndex] = incomingByte;
+      serialIndex++;
+    }
+  }
+
  
 
   digitalWrite(LED_BUILTIN, button1.read() && button2.read());
@@ -182,6 +215,34 @@ void touchEvent(Fader* fader){
     
   }
 }
+
+void knobEvent(byte index, int direction, int value){
+  encoders[index-1].direction = direction;
+  encoders[index-1].value = value;
+  
+  if(globalMode==OP_Midi || globalMode==OP_Midi_NoMotor){
+    
+    midi.knobEvent(encoders[index-1].channel, &encoders[index-1]);
+  }
+}
+
+void proEncoderLabel(byte index, String text){
+  proLabel(index, 1, text);
+}
+
+void proFaderLabel(byte index, String text){
+  proLabel(index, 2, text);
+}
+
+void proLabel(byte index, byte pos, String text){
+  Serial8.print("L");
+  Serial8.print(index);
+  Serial8.print("/");
+  Serial8.print(pos);
+  Serial8.print("@");
+  Serial8.println(text);
+}
+
 
 void channelUpdateAll(){
   fader1.updateChannel();
@@ -221,25 +282,25 @@ void setFaderTarget(byte index, int value){
 }
 
 void serialHeartbeat(){
-  Serial.print("FADER_X VERSION ");
-  Serial.print(versionMajor);
-  Serial.print(".");
-  Serial.print(versionMinor);
-  Serial.print(".");
-  Serial.println(versionSub);
-  
-  Serial.print("IP Address = ");
-  Serial.print(net.IP_Static[0]);
-  Serial.print(".");
-  Serial.print(net.IP_Static[1]);
-  Serial.print(".");
-  Serial.print(net.IP_Static[2]);
-  Serial.print(".");
-  Serial.println(net.IP_Static[3]);
-
-  Serial.print("Operation Mode = ");
-  Serial.println(globalMode);
-
-  Serial.print("Motherboard Revision = ");
-  Serial.println(globalMotherboardRevision);
+//  Serial.print("FADER_X VERSION ");
+//  Serial.print(versionMajor);
+//  Serial.print(".");
+//  Serial.print(versionMinor);
+//  Serial.print(".");
+//  Serial.println(versionSub);
+//  
+//  Serial.print("IP Address = ");
+//  Serial.print(net.IP_Static[0]);
+//  Serial.print(".");
+//  Serial.print(net.IP_Static[1]);
+//  Serial.print(".");
+//  Serial.print(net.IP_Static[2]);
+//  Serial.print(".");
+//  Serial.println(net.IP_Static[3]);
+//
+//  Serial.print("Operation Mode = ");
+//  Serial.println(globalMode);
+//
+//  Serial.print("Motherboard Revision = ");
+//  Serial.println(globalMotherboardRevision);
 }

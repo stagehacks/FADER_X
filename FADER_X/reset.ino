@@ -39,6 +39,15 @@ void newSettings(){
     fader7.setup(6);
     fader8.setup(7);
   }
+
+  proLabel(0, 0, fader1.channel);
+  proLabel(1, 0, fader2.channel);
+  proLabel(2, 0, fader3.channel);
+  proLabel(3, 0, fader4.channel);
+  proLabel(4, 0, fader5.channel);
+  proLabel(5, 0, fader6.channel);
+  proLabel(6, 0, fader7.channel);
+  proLabel(7, 0, fader8.channel);
   
 
   // MIDI

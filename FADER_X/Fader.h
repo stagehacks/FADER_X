@@ -39,8 +39,25 @@ class Fader {
     int getMode();
     byte getChannel();
     
+    void proLabel(String text);
+    
     byte index = 0;
     byte realIndex = 0;
     byte channel = 0;
     
+};
+
+class Encoder {
+
+  private:
+    
+    
+  public:
+    void proLabel(String text);
+
+    int value = 0;
+    int channel = 0;
+    int realIndex = 0;
+    int direction = 0;
+  
 };
