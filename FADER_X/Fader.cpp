@@ -55,7 +55,7 @@ void Fader::setup(byte index){
   
   //Serial.println(analogRead(this->readPin));
   
-  if(analogRead(this->readPin)>4085){
+  if(analogRead(this->readPin)>4080){
     setMode(FMODE_Disabled);
   }
 
