@@ -45,7 +45,7 @@ unsigned short globalMessageWaitMillis = 33;
 int globalMotorMinSpeed = 150;
 int globalMotorSpeedScale = 8;
 unsigned short globalMotorFrequency = 250;
-byte globalMotherboardRevision = 2;
+byte globalMotherboardRevision;
 boolean globalNewSettingsFlag = true;
 long globalLastBoot = 0;
 boolean globalFirstBoot = true;
@@ -72,7 +72,9 @@ Encoder encoders[8];
 
 void setup() {
   Serial.begin(9600);
-  Serial8.begin(9600);
+  if(EEPROM.read(21)>=3){
+    Serial8.begin(9600);
+  }
   
   delay(100);
   Serial.println("Powered On");

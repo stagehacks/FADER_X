@@ -148,7 +148,7 @@ boolean applySettings(EthernetClient*client, String*b){
   }
   if(mb){
     byte x = getParameter(b, mb).toInt();
-    if(x==1 || x==2){
+    if(x==1 || x==2 || x==3){
       EEPROM.write(21, x);
     }
   }

@@ -41,7 +41,6 @@ void newSettings(){
     fader8.setup(7);
   }
 
-
   proLabel(0, 0, fader1.channel);
   proLabel(1, 0, fader2.channel);
   proLabel(2, 0, fader3.channel);
@@ -192,8 +191,8 @@ void factoryReset(){
     EEPROM.write(22, 128); // Touch Sensitivity
   }
   
-  if(mb!=1 && mb!=2){
-    EEPROM.write(21, 2); // Motherboard Revision
+  if(mb!=1 && mb!=2&& mb!=3){
+    EEPROM.write(21, 3); // Motherboard Revision
   }
 
   

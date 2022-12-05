@@ -140,7 +140,8 @@ String bodyTemplate = "<body>"
   "<tr><td>Drive Frequency</td><td><input value='{motor-frequency}' type='number' name='t3'></td><td class='note'>PWM frequency of microcontroller output</td></tr>"
   "<tr><td>Motherboard</td><td><select name='mb'>"
     "<option value='1' {mb-1}>V1.0 - 1.3</option>"
-    "<option value='2' {mb-2}>V1.4 +</option>"
+    "<option value='2' {mb-2}>V1.4 - 1.7</option>"
+    "<option value='3' {mb-3}>V1.8+</option>"
   "</select></td><td class='note'>Motherboard revision</td></tr>"
   "<tr><td>Rotated</td><td><input type='checkbox' name='rot' {rot}></td><td class='note'>For mounting the FADER_X upside-down</td></tr>"
 "</table>"
@@ -315,9 +316,15 @@ void generateIndex(){
   if(globalMotherboardRevision==1){
     temp.replace("{mb-1}", "selected");
     temp.replace("{mb-2}", "");
+    temp.replace("{mb-3}", "");
   }else if(globalMotherboardRevision==2){
-    temp.replace("{mb-2}", "selected");
     temp.replace("{mb-1}", "");
+    temp.replace("{mb-2}", "selected");
+    temp.replace("{mb-3}", "");
+  }else if(globalMotherboardRevision==3){
+    temp.replace("{mb-1}", "");
+    temp.replace("{mb-2}", "");
+    temp.replace("{mb-3}", "selected");    
   }
 
   char LocalIPBuf[15];
