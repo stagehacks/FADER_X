@@ -56,7 +56,7 @@ void Fader::setup(byte index){
   
   //Serial.println(analogRead(this->readPin));
   
-  if(analogRead(this->readPin)>4085){
+  if(analogRead(this->readPin)>4080){
     setMode(FMODE_Disabled);
   }
 
@@ -252,6 +252,30 @@ void Fader::setMode(int m){
 //   }
   this->lastModeStart = millis();
   this->mode = m;
+
+  Serial8.print('T');
+  Serial8.print(String(this->realIndex));
+  if(m==FMODE_Touch){
+    Serial8.println("@1");
+  }else{
+    Serial8.println("@0");
+  }
+}
+
+void Fader::proLabel(String text){
+  Serial8.print("L");
+  Serial8.print(this->realIndex);
+  Serial8.print("/2");
+  Serial8.print("@");
+  Serial8.println(text);
+}
+
+void Encoder::proLabel(String text){
+  Serial8.print("L");
+  Serial8.print(this->realIndex);
+  Serial8.print("/1");
+  Serial8.print("@");
+  Serial8.println(text);
 }
 void Fader::setTargetToCurrentPosition(){
   this->rawPosition = analogRead(this->readPin);
