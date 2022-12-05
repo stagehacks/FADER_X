@@ -83,8 +83,16 @@ void QLab::parseOSC(OSCMessage msgIn){
     int e = json.indexOf("\",\"", s);
     String workspace = json.substring(s + 11, e);
 
+    char passBuf[8];
+    for(byte i=0; i<8; i++){
+      passBuf[i] = EEPROM.read(132+i);
+    }
+    String passcode = String(passBuf);
+
     OSCMessage msg1("/workspace/"+workspace+"/connect");
-    msg1.addString("5353");
+    if(passcode.length()>0){
+      msg1.addString(passcode);
+    }
     udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
     msg1.writeUDP(&udp);
     udp.endPacket();
@@ -108,7 +116,7 @@ void QLab::parseOSC(OSCMessage msgIn){
   }else if(msgIn.match("/update/workspace/*/cue_id/*")){
     sincePlaybackPositionChanged = 100;
 
-  }else if(msgIn.match("/reply/cue/selected/sliderLevels")){
+  }else if(msgIn.match("/reply/*/*/sliderLevels")){ // wildcard necessary because QLab 4 and 5 send different replies
     if(msgIn.getString(0).indexOf("\"status\":\"ok\"")==1){
       String levels = jsonDataObject(msgIn.getString(0));
       int c = 1;
@@ -127,8 +135,8 @@ void QLab::parseOSC(OSCMessage msgIn){
         setFaderTarget(i, 0);
       }
     }
-    
-  }else if(msgIn.match("/reply/cue/selected/type")){
+
+  }else if(msgIn.match("/reply/*/*/type")){ // wildcard necessary because QLab 4 and 5 send different replies
     String cueType = jsonDataObject(msgIn.getString(0));
 
     if(cueType=="\"Audio\"" || cueType=="\"Video\"" || cueType=="\"Fade\"" || cueType=="\"Mic\"" || cueType=="\"Camera\""){

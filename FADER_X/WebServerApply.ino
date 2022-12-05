@@ -41,6 +41,7 @@ boolean applySettings(EthernetClient*client, String*b){
   int t1 = containsParam(b, "t1");
   int t2 = containsParam(b, "t2");
   int t3 = containsParam(b, "t3");
+  int t4 = containsParam(b, "t4");
   int rot = containsParam(b, "rot");
   int mb = containsParam(b, "mb");
 
@@ -135,7 +136,10 @@ boolean applySettings(EthernetClient*client, String*b){
       globalMotorFrequency = defaultMotorFrequency;
     }
     EEPROM.put(18, globalMotorFrequency);
-    
+  }
+  if(t4){
+    byte x = getParameter(b, t4).toInt();
+    EEPROM.write(22, x);
   }
   if(rot){
     EEPROM.write(20, 1);

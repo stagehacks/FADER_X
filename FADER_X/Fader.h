@@ -34,6 +34,7 @@ class Fader {
     void setTarget(int position);
     void setMode(int m);
     void updateChannel();
+    void setTargetToCurrentPosition();
     int getPositionTrimmed();
     int getPosition();
     int getMode();

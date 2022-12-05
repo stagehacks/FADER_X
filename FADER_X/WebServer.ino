@@ -133,6 +133,7 @@ String bodyTemplate = "<body>"
 "</table>"
 "<table class='block'>"
   "<tr><th colspan='3'>Fader Tuning</th></tr>"
+  "<tr><td>Touch Sensitivity</td><td><input value='{touch-sense}' type='number' name='t4' min='4' max='200'></td><td class='note'>Lower numbers mean more sensitivty and smoother slow fades, but potentially also phantom touches.</td></tr></tr>"
   "<tr><td>Message wait</td><td><input value='{msg-wait}' type='number' name='t0'</td><td class='note'>Milliseconds to wait between sending OSC or MIDI messages</td></tr></tr>"
   "<tr><td>Minimum Speed</td><td><input value='{min-speed}' type='number' name='t1'></td><td class='note'>Minimum PWM speed of motors</td></tr>"
   "<tr><td>Speed Scale</td><td><input value='{speed-scale}' type='number' name='t2'></td><td class='note'>Increases speed of motor by 1/scale as the distance to travel increases</td></tr>"
@@ -299,6 +300,7 @@ void generateIndex(){
   temp.replace("{v2}", versionMinor);
   temp.replace("{v3}", versionSub);
 
+  temp.replace("{touch-sense}", globalTouchSensitivity);
   temp.replace("{msg-wait}", globalMessageWaitMillis);
   temp.replace("{min-speed}", globalMotorMinSpeed);
   temp.replace("{speed-scale}", globalMotorSpeedScale);

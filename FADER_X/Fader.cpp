@@ -8,6 +8,7 @@ extern int globalFaderTargets[255];
 extern byte globalFaderChannels[32];
 extern void touchEvent(Fader* fader);
 
+extern byte globalTouchSensitivity;
 extern unsigned short globalMessageWaitMillis;
 extern int globalMotorMinSpeed;
 extern int globalMotorSpeedScale;
@@ -64,8 +65,6 @@ void Fader::setup(byte index){
 
   this->index = index;
   this->updateChannel();
-  this->rawPosition = analogRead(this->readPin);
-  globalFaderTargets[this->channel] = this->getPosition();
 
   ease.duration(EaseSpeed);
 }
@@ -99,9 +98,8 @@ void Fader::loop(){
     
     case FMODE_Rest:
       
-      if(abs(this->rawPosition-analogRead(this->readPin))>12){
-        setMode(FMODE_Touch);
-        
+      if(abs(this->rawPosition-analogRead(this->readPin))>globalTouchSensitivity){
+        setMode(FMODE_Touch); 
         
       }else if((distanceToTarget>6 && this->lastTarget!=target) || distanceToTarget>20){
         setMode(FMODE_Motor);
@@ -144,17 +142,16 @@ void Fader::loop(){
 
 
 void Fader::touchLoop(){
-  
-  if(abs(globalFaderTargets[this->channel]-this->getPosition())>2 && mils-this->lastTouchEvent>globalMessageWaitMillis){
-    globalFaderTargets[this->channel] = this->getPosition();
+  int pos = this->getPosition();
+
+  // constant flutter between 2 values if distance check is less than 3
+  if(abs(globalFaderTargets[this->channel]-pos)>3 && mils-this->lastTouchEvent>globalMessageWaitMillis){
+    globalFaderTargets[this->channel] = pos;
     this->lastTouchEvent = mils;
-    //Serial.println(this->getPosition());
     touchEvent(this);
   }
   
-  if(mils-this->lastTouchEvent > globalMessageWaitMillis*2){ // tail debounce when after touching the fader
-    globalFaderTargets[this->channel] = this->getPosition();
-    touchEvent(this);
+  if(mils-this->lastTouchEvent > 300){ 
     setMode(FMODE_Rest);
     
   }
@@ -234,6 +231,25 @@ int Fader::getMode(){
   return this->mode;
 }
 void Fader::setMode(int m){
+//   Serial.print("---------- mode ");
+
+//   switch(m) {
+//     case FMODE_Disabled:
+//       Serial.println("Disabled");
+//       break;
+//     case FMODE_Rest:
+//       Serial.println("Rest");
+//       break;
+//     case FMODE_Touch:
+//         Serial.println("Touch");
+//       break;
+//     case FMODE_Motor:
+//         Serial.println("Motor");
+//       break;
+//     case FMODE_Pause:
+//         Serial.println("Pause");
+//       break;
+//   }
   this->lastModeStart = millis();
   this->mode = m;
 
@@ -260,4 +276,8 @@ void Encoder::proLabel(String text){
   Serial8.print("/1");
   Serial8.print("@");
   Serial8.println(text);
+}
+void Fader::setTargetToCurrentPosition(){
+  this->rawPosition = analogRead(this->readPin);
+  globalFaderTargets[this->channel] = this->getPosition();
 }

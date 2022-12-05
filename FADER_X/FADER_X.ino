@@ -10,9 +10,9 @@
 #include <Bounce2.h>
 using namespace qindesign::network;
 
-#define MAJOR 0
-#define SUBVERSION 9
-#define PATCH 1
+#define MAJOR 1
+#define SUBVERSION 0
+#define PATCH 0
 
 EthernetServer globalWebServer(80);
 EthernetUDP globalUDP;
@@ -40,6 +40,7 @@ boolean globalRotated = false;
 int globalFaderTargets[255];
 byte globalFaderChannels[32];
 byte globalPage = 0;
+byte globalTouchSensitivity = 128;
 unsigned short globalMessageWaitMillis = 33;
 int globalMotorMinSpeed = 150;
 int globalMotorSpeedScale = 8;

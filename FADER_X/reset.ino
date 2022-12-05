@@ -6,6 +6,7 @@ void newSettings(){
   versionSub = EEPROM.read(10);
 
   EEPROM.get(14, globalMessageWaitMillis);
+  globalTouchSensitivity = EEPROM.read(22);
   globalMode = EEPROM.read(24);
   globalMotorMinSpeed = EEPROM.read(16);
   globalMotorSpeedScale = EEPROM.read(17);
@@ -16,7 +17,7 @@ void newSettings(){
     globalFaderChannels[i] = EEPROM.read(66+i);
   }
   for(byte i=0; i<255; i++){
-    globalFaderTargets[i] = 500;
+    globalFaderTargets[i] = 0;
   }
   
   globalRotated = EEPROM.read(20)==1;
@@ -40,6 +41,7 @@ void newSettings(){
     fader8.setup(7);
   }
 
+
   proLabel(0, 0, fader1.channel);
   proLabel(1, 0, fader2.channel);
   proLabel(2, 0, fader3.channel);
@@ -48,6 +50,18 @@ void newSettings(){
   proLabel(5, 0, fader6.channel);
   proLabel(6, 0, fader7.channel);
   proLabel(7, 0, fader8.channel);
+
+  delay(10);
+
+  fader1.setTargetToCurrentPosition();
+  fader2.setTargetToCurrentPosition();
+  fader3.setTargetToCurrentPosition();
+  fader4.setTargetToCurrentPosition();
+  fader5.setTargetToCurrentPosition();
+  fader6.setTargetToCurrentPosition();
+  fader7.setTargetToCurrentPosition();
+  fader8.setTargetToCurrentPosition();
+
   
 
   // MIDI
@@ -169,11 +183,20 @@ void factoryReset(){
   EEPROM.write(17, defaultMotorScaleFactor); // Motor Scale Factor
   EEPROM.put(18, defaultMotorFrequency); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
-
+  
   byte mb = EEPROM.read(21);
+  
+  if(mb==2){
+    EEPROM.write(22, 10); // Touch Sensitivity
+  }else{
+    EEPROM.write(22, 128); // Touch Sensitivity
+  }
+  
   if(mb!=1 && mb!=2){
     EEPROM.write(21, 2); // Motherboard Revision
   }
+
+  
 
   EEPROM.write(24, 1); // Op Mode
 
