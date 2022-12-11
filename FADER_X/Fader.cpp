@@ -7,6 +7,7 @@ extern byte ledPageHues[4];
 extern int globalFaderTargets[255];
 extern byte globalFaderChannels[32];
 extern void touchEvent(Fader* fader);
+extern void motorEvent(Fader* fader);
 
 extern byte globalTouchSensitivity;
 extern unsigned short globalMessageWaitMillis;
@@ -45,7 +46,7 @@ void Fader::setup(byte index){
   if(globalMotherboardRevision==1){
     this->motorPinA = PINS_1_A[this->realIndex];
     this->motorPinB = PINS_1_B[this->realIndex];
-  }else if(globalMotherboardRevision==2){
+  }else if(globalMotherboardRevision==2 || globalMotherboardRevision==3){
     this->motorPinA = PINS_2_A[this->realIndex];
     this->motorPinB = PINS_2_B[this->realIndex];
   }
@@ -165,6 +166,7 @@ void Fader::motorLoop(){
   ease.duration(this->easeSpeed);
 
   if(mils-this->lastModeStart > max(this->easeSpeed+200, globalMessageWaitMillis)){
+    motorEvent(this);
     setMode(FMODE_Rest);
 
   }else{
@@ -193,6 +195,8 @@ void Fader::motorLoop(){
       analogWrite(this->motorPinA, 0);
       analogWrite(this->motorPinB, 0);
     }
+
+    
 
   }
 
@@ -253,29 +257,35 @@ void Fader::setMode(int m){
   this->lastModeStart = millis();
   this->mode = m;
 
-  Serial8.print('T');
-  Serial8.print(String(this->realIndex));
-  if(m==FMODE_Touch){
-    Serial8.println("@1");
-  }else{
-    Serial8.println("@0");
+  if(globalMotherboardRevision>=3){
+    Serial8.print('T');
+    Serial8.print(String(this->realIndex));
+    if(m==FMODE_Touch){
+      Serial8.println("@1");
+    }else{
+      Serial8.println("@0");
+    }
   }
 }
 
 void Fader::proLabel(String text){
-  Serial8.print("L");
-  Serial8.print(this->realIndex);
-  Serial8.print("/2");
-  Serial8.print("@");
-  Serial8.println(text);
+  if(globalMotherboardRevision>=3){
+    Serial8.print("L");
+    Serial8.print(this->realIndex);
+    Serial8.print("/2");
+    Serial8.print("@");
+    Serial8.println(text);
+  }
 }
 
 void Encoder::proLabel(String text){
-  Serial8.print("L");
-  Serial8.print(this->realIndex);
-  Serial8.print("/1");
-  Serial8.print("@");
-  Serial8.println(text);
+  if(globalMotherboardRevision>=3){
+    Serial8.print("L");
+    Serial8.print(this->realIndex);
+    Serial8.print("/1");
+    Serial8.print("@");
+    Serial8.println(text);
+  }
 }
 void Fader::setTargetToCurrentPosition(){
   this->rawPosition = analogRead(this->readPin);

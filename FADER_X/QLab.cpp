@@ -169,14 +169,28 @@ void QLab::touchEvent(int channel, Fader *fader){
     usbMIDI.sendControlChange(channel, position/8, midi.sendChannel);
     
   }else{
+    float audioLevel = faderToAudioLevel(position);
     OSCMessage msg("/cue/selected/level/0/"+String(channel));
-    msg.addFloat(faderToAudioLevel(position));
+    msg.addFloat(audioLevel);
     
     udp.beginPacket(net.IP_Destination, net.IP_DestinationPort);
     msg.writeUDP(&udp);
     udp.endPacket();
+
+    fader->proLabel((int)audioLevel);
   }
 
+}
+
+void QLab::motorEvent(int channel, Fader *fader){
+  int level = (int)faderToAudioLevel(fader->getPosition());
+  
+  if(level<-56){
+    fader->proLabel("");
+  }else{
+    fader->proLabel(level);
+  }
+  
 }
 
 void QLab::changePage(){

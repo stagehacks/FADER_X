@@ -18,6 +18,7 @@ class QLab {
     void loop();
     
     void touchEvent(int channel, Fader *fader);
+    void motorEvent(int channel, Fader *fader);
     void heartbeat();
     void parseOSC(OSCMessage msg);
     void changePage();

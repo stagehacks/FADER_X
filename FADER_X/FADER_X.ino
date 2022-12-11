@@ -110,7 +110,7 @@ void loop() {
   net.loop();
 
   if(globalMode==OP_Midi){
-     midi.loop();
+    midi.loop();
      
   }else if(globalMode==OP_QLab){
     qlab.loop();
@@ -170,24 +170,26 @@ void loop() {
   }
 
 
-  while (Serial8.available() > 0) {
-    char incomingByte = Serial8.read();
-
-    if(incomingByte == 0x0A){
-      if(serialBuf[0]=='K'){
-        String str = String(serialBuf);
-        byte i = String(serialBuf[1]).toInt();
-        int val1 = str.substring(str.indexOf("@")+1, str.indexOf(",")).toInt();
-        int val2 = str.substring(str.indexOf(",")+1).toInt();
-        knobEvent(i, val2, val1);
+  if(globalMotherboardRevision>=3){
+    while (Serial8.available() > 0) {
+      char incomingByte = Serial8.read();
+  
+      if(incomingByte == 0x0A){
+        if(serialBuf[0]=='K'){
+          String str = String(serialBuf);
+          byte i = String(serialBuf[1]).toInt();
+          int val1 = str.substring(str.indexOf("@")+1, str.indexOf(",")).toInt();
+          int val2 = str.substring(str.indexOf(",")+1).toInt();
+          knobEvent(i, val2, val1);
+        }
+        for(byte i=0; i<serialIndex; i++){
+          serialBuf[i] = 0;
+        }
+        serialIndex = 0;
+      }else{
+        serialBuf[serialIndex] = incomingByte;
+        serialIndex++;
       }
-      for(byte i=0; i<serialIndex; i++){
-        serialBuf[i] = 0;
-      }
-      serialIndex = 0;
-    }else{
-      serialBuf[serialIndex] = incomingByte;
-      serialIndex++;
     }
   }
 
@@ -219,6 +221,16 @@ void touchEvent(Fader* fader){
   }
 }
 
+byte tick = 0;
+void motorEvent(Fader* fader){
+  byte channel = fader->getChannel();
+
+  if(globalMode==OP_QLab){
+    qlab.motorEvent(channel, fader);
+    
+  }
+}
+
 void knobEvent(byte index, int direction, int value){
   encoders[index-1].direction = direction;
   encoders[index-1].value = value;
@@ -238,12 +250,14 @@ void proFaderLabel(byte index, String text){
 }
 
 void proLabel(byte index, byte pos, String text){
-  Serial8.print("L");
-  Serial8.print(index);
-  Serial8.print("/");
-  Serial8.print(pos);
-  Serial8.print("@");
-  Serial8.println(text);
+  if(globalMotherboardRevision>=3){
+    Serial8.print("L");
+    Serial8.print(index);
+    Serial8.print("/");
+    Serial8.print(pos);
+    Serial8.print("@");
+    Serial8.println(text);
+  }
 }
 
 
@@ -281,7 +295,9 @@ void unpauseAllFaders(){
 }
 
 void setFaderTarget(byte index, int value){
-  globalFaderTargets[index] = max(0, min(1023, value));
+  if(index>0 && index<256){
+    globalFaderTargets[index] = max(0, min(1023, value));
+  }
 }
 
 void serialHeartbeat(){
