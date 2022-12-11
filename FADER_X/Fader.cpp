@@ -57,7 +57,7 @@ void Fader::setup(byte index){
   
   //Serial.println(analogRead(this->readPin));
   
-  if(analogRead(this->readPin)>4080){
+  if(analogRead(this->readPin)>4075){
     setMode(FMODE_Disabled);
   }
 
@@ -166,7 +166,7 @@ void Fader::motorLoop(){
   ease.duration(this->easeSpeed);
 
   if(mils-this->lastModeStart > max(this->easeSpeed+200, globalMessageWaitMillis)){
-    motorEvent(this);
+    //motorEvent(this);
     setMode(FMODE_Rest);
 
   }else{
