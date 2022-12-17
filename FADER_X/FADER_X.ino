@@ -73,7 +73,7 @@ Encoder encoders[8];
 void setup() {
   Serial.begin(9600);
   if(EEPROM.read(21)>=3){
-    Serial8.begin(9600);
+    Serial8.begin(115200);
   }
   
   delay(100);
@@ -100,7 +100,7 @@ void setup() {
     encoders[i].realIndex = i;
   }
 }
-
+int lastLoop = 0;
 void loop() {
   if(globalNewSettingsFlag){
     globalNewSettingsFlag = false;
@@ -129,6 +129,8 @@ void loop() {
     
   }
 
+  lastLoop = millis();
+
   fader1.loop();
   fader2.loop();
   fader3.loop();
@@ -137,6 +139,12 @@ void loop() {
   fader6.loop();
   fader7.loop();
   fader8.loop();
+
+  if(millis()-lastLoop>4){
+    Serial.print("Code hung for ");
+    Serial.print(millis()-lastLoop);
+    Serial.println("ms");
+  }
 
   button1.update();
   button2.update();
@@ -225,6 +233,10 @@ byte tick = 0;
 void motorEvent(Fader* fader){
   byte channel = fader->getChannel();
 
+  if(globalMode==OP_Midi){
+    midi.motorEvent(channel, fader);
+    
+  }
   if(globalMode==OP_QLab){
     qlab.motorEvent(channel, fader);
     
