@@ -43,7 +43,7 @@ elapsedMillis sincePlaybackPositionChanged = 0;
 void QLab::loop(){
   long mils = millis();
 
-  if(mils-lastHeartbeat>10000){
+  if(mils-lastHeartbeat>100000){
     lastHeartbeat = mils;
     this->heartbeat();
   }
@@ -112,6 +112,7 @@ void QLab::parseOSC(OSCMessage msgIn){
 
   }else if(msgIn.match("/update/workspace/*/cueList/*/playbackPosition")){
     sincePlaybackPositionChanged = 0;
+    //Serial.println("pb changed");0
 
   }else if(msgIn.match("/update/workspace/*/cue_id/*")){
     sincePlaybackPositionChanged = 100;
@@ -177,18 +178,29 @@ void QLab::touchEvent(int channel, Fader *fader){
     msg.writeUDP(&udp);
     udp.endPacket();
 
-    fader->proLabel((int)audioLevel);
+    char buf[5];
+    dtostrf(audioLevel, 2, 1, buf);
+
+    if(audioLevel>0){
+      fader->label(String("+").concat(buf));
+    }else{
+      fader->label(buf);
+    }
   }
 
 }
 
 void QLab::motorEvent(int channel, Fader *fader){
-  int level = (int)faderToAudioLevel(fader->getPosition());
-  
-  if(level<-56){
-    fader->proLabel("");
+  float level = faderToAudioLevel(fader->getTarget());
+  char buf[5];
+  dtostrf(level, 2, 1, buf);
+ 
+  if(level<-59){
+    fader->label("");
+  }else if(level>0){
+    fader->label(String("+").concat(buf));
   }else{
-    fader->proLabel(level);
+    fader->label(buf);
   }
   
 }
