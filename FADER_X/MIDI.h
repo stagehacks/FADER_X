@@ -10,6 +10,7 @@ class Midi {
 
     void touchEvent(int channel, Fader *fader);
     void knobEvent(byte channel, Encoder *encoder);
+    void motorEvent(int channel, Fader *fader);
 
     byte listenChannel = 1;
     byte sendChannel = 1;

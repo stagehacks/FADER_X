@@ -11,6 +11,7 @@ int knobValues[255];
 
 void midiCCHandle(byte channel, byte fader, byte value) {
   setFaderTarget(fader, value*8);
+  Serial.println(value);
 }
 
 void Midi::setup(){
@@ -30,7 +31,7 @@ void Midi::touchEvent(int channel, Fader *fader){
   byte pos = fader->getPositionTrimmed()/8;
   usbMIDI.sendControlChange(channel, pos, this->sendChannel);
 
-  fader->proLabel(pos);
+  fader->label(pos);
   
 }
 
@@ -39,6 +40,10 @@ void Midi::knobEvent(byte channel, Encoder *encoder){
   knobValues[channel] = min(127, max(0, knobValues[channel]));
   usbMIDI.sendControlChange(channel, knobValues[channel], this->sendChannel);
 
-  encoder->proLabel(knobValues[channel]);
+  encoder->label(knobValues[channel]);
   
+}
+
+void Midi::motorEvent(int channel, Fader *fader){
+  fader->label(fader->getTarget()/8);
 }
