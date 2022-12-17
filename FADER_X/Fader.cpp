@@ -166,7 +166,7 @@ void Fader::motorLoop(){
   ease.duration(this->easeSpeed);
 
   if(mils-this->lastModeStart > max(this->easeSpeed+200, globalMessageWaitMillis)){
-    //motorEvent(this);
+    motorEvent(this);
     setMode(FMODE_Rest);
 
   }else{
@@ -234,6 +234,9 @@ byte Fader::getChannel(){
 int Fader::getMode(){
   return this->mode;
 }
+int Fader::getTarget(){
+  return globalFaderTargets[this->channel];
+}
 void Fader::setMode(int m){
 //   Serial.print("---------- mode ");
 
@@ -268,22 +271,20 @@ void Fader::setMode(int m){
   }
 }
 
-void Fader::proLabel(String text){
+void Fader::label(String text){
   if(globalMotherboardRevision>=3){
-    Serial8.print("L");
+    Serial8.write('L');
     Serial8.print(this->realIndex);
-    Serial8.print("/2");
-    Serial8.print("@");
+    Serial8.print("/2@");
     Serial8.println(text);
   }
 }
 
-void Encoder::proLabel(String text){
+void Encoder::label(String text){
   if(globalMotherboardRevision>=3){
-    Serial8.print("L");
+    Serial8.write('L');
     Serial8.print(this->realIndex);
-    Serial8.print("/1");
-    Serial8.print("@");
+    Serial8.print("/1@");
     Serial8.println(text);
   }
 }
