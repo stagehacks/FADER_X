@@ -1,13 +1,9 @@
 #include "MIDI.h"
 
 extern void setFaderTarget(byte index, int value);
-
-extern void proEncoderLabel(byte index, String text);
-extern void proFaderLabel(byte index, String text);
-
 int knobValues[255];
-
-
+extern Fader fader1, fader2, fader3, fader4, fader5, fader6, fader7, fader8;
+extern Encoder encoders[8];
 
 void midiCCHandle(byte channel, byte fader, byte value) {
   setFaderTarget(fader, value*8);
@@ -18,6 +14,19 @@ void Midi::setup(){
   usbMIDI.setHandleControlChange(midiCCHandle);
   Serial.print("MIDI Setup on channel ");
   Serial.println(this->sendChannel);
+
+  fader1.label(fader1.getPositionTrimmed()/8);
+  fader2.label(fader2.getPositionTrimmed()/8);
+  fader3.label(fader3.getPositionTrimmed()/8);
+  fader4.label(fader4.getPositionTrimmed()/8);
+  fader5.label(fader5.getPositionTrimmed()/8);
+  fader6.label(fader6.getPositionTrimmed()/8);
+  fader7.label(fader7.getPositionTrimmed()/8);
+  fader8.label(fader8.getPositionTrimmed()/8);
+
+  for(byte i=0; i<8; i++){
+    encoders[i].label(0);
+  }
  
 }
 
