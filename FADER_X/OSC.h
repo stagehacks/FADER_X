@@ -5,6 +5,8 @@ using namespace qindesign::network;
 #ifndef OSC_H
 #define OSC_H
 
+#define maxParamCount 6
+
 union oscBlob {
    int i;
    float f;
@@ -20,10 +22,10 @@ class OSCMessage{
     void nullPadUDP(EthernetUDP *udp, byte count);
     
     String addr;
-    oscBlob blobs[4];
+    oscBlob blobs[maxParamCount];
    
     byte parameterCount = 0;
-    char paramTypes[4];
+    char paramTypes[maxParamCount];
     String paramStrings[6];
 
   public:
