@@ -71,7 +71,7 @@ Encoder encoders[8];
 #define OP_Dance 10
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   if(EEPROM.read(21)>=3){
     Serial8.begin(115200);
   }
@@ -229,17 +229,17 @@ void touchEvent(Fader* fader){
   }
 }
 
-byte tick = 0;
 void motorEvent(Fader* fader){
   byte channel = fader->getChannel();
 
   if(globalMode==OP_Midi){
     midi.motorEvent(channel, fader);
     
-  }
-  if(globalMode==OP_QLab){
+  }else if(globalMode==OP_QLab){
     qlab.motorEvent(channel, fader);
     
+  }else if(globalMode==OP_Eos){
+    eos.motorEvent(channel, fader);
   }
 }
 
@@ -248,26 +248,22 @@ void knobEvent(byte index, int direction, int value){
   encoders[index-1].value = value;
   
   if(globalMode==OP_Midi || globalMode==OP_Midi_NoMotor){
-    
     midi.knobEvent(encoders[index-1].channel, &encoders[index-1]);
+    
+  }else if(globalMode==OP_Eos){
+    eos.knobEvent(encoders[index-1].channel, &encoders[index-1]);
+
   }
 }
 
-void proEncoderLabel(byte index, String text){
-  proLabel(index, 1, text);
-}
-
-void proFaderLabel(byte index, String text){
-  proLabel(index, 2, text);
-}
 
 void proLabel(byte index, byte pos, String text){
   if(globalMotherboardRevision>=3){
-    Serial8.print("L");
+    Serial8.write('L');
     Serial8.print(index);
-    Serial8.print("/");
+    Serial8.write('/');
     Serial8.print(pos);
-    Serial8.print("@");
+    Serial8.write('@');
     Serial8.println(text);
   }
 }
