@@ -18,6 +18,8 @@ class Eos {
     EthernetClient eosClient;
     
     void touchEvent(int channel, Fader *fader);
+    void knobEvent(byte channel, Encoder *encoder);
+    void motorEvent(int channel, Fader *fader);
     void processOSC(OSCMessage msg);
     
     byte faderBank = 1;
