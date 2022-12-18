@@ -29,10 +29,23 @@ String bodyTemplate = "<body>"
   "<button form='main' type='Submit'>Apply Settings</button>"
   "<a href='/reset'>Factory Reset</a><a href='https://github.com/stagehacks/FADER_X'>Readme</a><a>Version {v1}.{v2}.{v3}</a>"
 "</header>"
-"<form id='main' method='get' action='/apply'>"
+"<form id='main' method='post' action='/apply'>"
 "<input value='{tok1}{tok2}{tok3}{tok4}' name='sessionToken' type='hidden'>"
-"<table>"
-  "<tr><th colspan='65'>Fader Channels</th></tr>"
+"<table class='block'>"
+  "<tr><th colspan='3'>Operation</th></tr>"
+  "<tr><td>Mode</td><td><select name='op'>"
+    "<option value='1' {op-1}>MIDI</option>"
+    "<option value='2' {op-2}>MIDI (Motors disabled)</option>"
+    "<option value='3' {op-3}>QLab</option>"
+    "<option value='6' {op-6}>ETC Eos</option>"
+    "<option value='7' {op-7}>DiGiCo</option>"
+    "<option value='8' {op-8}>X32/M32</option>"
+    "<option value='10' {op-10}>Dance</option>"
+  "</select></td><td></td></tr>"
+"</table>";
+
+String channelTemplate = "<table class='block mode'>"
+  "<tr><th colspan='65'>&#11153;&nbsp;&nbsp; Fader Channels</th></tr>"
   "<tr><td style='width: 40px;'>Num</td><td style='width: 115px;'>Position</td><td>Page 1</td><td>Page 2</td><td>Page 3</td><td>Page 4</td></tr>"
   "<tr><td>1</td><td id='val1'></td>"
     "<td><input type='number' name='ch1A' value='{ch-1A}' min='0'></td>"
@@ -74,8 +87,10 @@ String bodyTemplate = "<body>"
     "<td><input type='number' name='ch8B' value='{ch-8B}' min='0'></td>"
     "<td><input type='number' name='ch8C' value='{ch-8C}' min='0'></td>"
     "<td><input type='number' name='ch8D' value='{ch-8D}' min='0'></td></tr>"
- "</table>"
-"<table class='block'>"
+ "</table>";
+
+ 
+String networkingTemplate = "<table class='block'>"
   "<tr><th colspan='3'>Networking</th></tr>"
   "<tr><td>Ethernet Mode</td><td>"
     "<select name='n1'>"
@@ -89,38 +104,30 @@ String bodyTemplate = "<body>"
   "<tr><td>OSC Destination IP</td><td><input value='{net-destIP}' name='n6' maxLength='15'></td><td></td></tr>"
   "<tr><td>OSC Destination Port</td><td><input value='{net-destPort}' type='number' name='n7' min='1' max='65535'></td><td class='note'>Ignored in operation modes that require a specific port number</td></tr>"
   "<tr><td>MAC Address</td><td><em>{net-mac}</em></td><td></td></tr>"
-"</table>"
-"<table class='block'>"
-  "<tr><th colspan='3'>Operation</th></tr>"
-  "<tr><td>Mode</td><td><select name='op'>"
-    "<option value='1' {op-1}>MIDI</option>"
-    "<option value='2' {op-2}>MIDI (Motors disabled)</option>"
-    "<option value='3' {op-3}>QLab</option>"
-    "<option value='6' {op-6}>ETC Eos</option>"
-    "<option value='7' {op-7}>DiGiCo</option>"
-    "<option value='8' {op-8}>X32/M32</option>"
-    "<option value='10' {op-10}>Dance</option>"
-  "</select></td><td></td></tr>"
-"</table>"
-"<table class='block mode'>"
+"</table>";
+
+String midiTemplate = "<table class='block mode'>"
   "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; MIDI Mode</th></tr>"
   "<tr><td>Send Channel</td><td><input value='{midi-send-ch}' type='number' name='m92' min='1' max='16'></td><td></td></tr>"
   "<tr><td>Listen Channel</td><td><input value='{midi-listen-ch}' type='number' name='m91' min='1' max='16'></td><td></td></tr>"
-"</table>"
-"<table class='block mode'>"
+"</table>";
+
+String qlabTemplate = "<table class='block mode'>"
   "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; QLab Mode</th></tr>"
   "<tr><td>OSC Passcode</td><td><input value='{qlab-passcode}' type='text' name='q5' maxlength='8'></td><td></td></tr>"
   "<tr><td>Maximum Volume</td><td><input value='{qlab-max}' type='number' name='q1' min='0' max='24'><small>db</small></td><td></td></tr>"
   "<tr><td>Minimum Volume</td><td><input value='-{qlab-min}' type='number' name='q2' min='-127' max='0'><small>db</small></td><td></td></tr>"
   "<tr><td>MIDI</td><td><input type='checkbox' name='q3' {q3}></td><td><small>Pages 3/4 are MIDI controls for QLab Lighting</small></td></tr>"
   "<tr><td>Auto MIDI Switch</td><td><input type='checkbox' name='q4' {q4}></td><td><small>Switch to MIDI automatically depending on selected cue's type</small></td></tr>"
-"</table>"
-"<table class='block mode'>"
+"</table>";
+
+String eosTemplate = "<table class='block mode'>"
   "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; ETC Eos Mode</th></tr>"
   "<tr><td>OSC Bank ID</td><td><input value='{eos-bank}' type='number' name='e1' min='1' max='16'></td><td><small>All OSC fader banks, including apps, must have a unique ID.</small></td></tr>"
   "<tr><td>Fader Count</td><td><input value='{eos-count}' type='number' name='e2' min='1' max='255'></td><td></td></tr>"
-"</table>"
-"<table class='block mode'>"
+"</table>";
+
+String x32Template = "<table class='block mode'>"
   "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; X32/M32 Mode</th></tr>"
   "<tr><td>Target</td><td><select name='x1'>"
     "<option value='1' {x1-1}>Channel</option>"
@@ -130,8 +137,9 @@ String bodyTemplate = "<body>"
     "<option value='5' {x1-5}>FX Return</option>"
     "<option value='6' {x1-6}>Matrix</option>"
   "</select></td><td></td></tr>"
-"</table>"
-"<table class='block'>"
+"</table>";
+
+String tuningTemplate = "<table class='block'>"
   "<tr><th colspan='3'>Fader Tuning</th></tr>"
   "<tr><td>Touch Sensitivity</td><td><input value='{touch-sense}' type='number' name='t4' min='4' max='200'></td><td class='note'>Lower numbers mean more sensitivty and smoother slow fades, but potentially also phantom touches.</td></tr></tr>"
   "<tr><td>Message wait</td><td><input value='{msg-wait}' type='number' name='t0'</td><td class='note'>Milliseconds to wait between sending OSC or MIDI messages</td></tr></tr>"
@@ -144,8 +152,9 @@ String bodyTemplate = "<body>"
     "<option value='3' {mb-3}>V1.8+</option>"
   "</select></td><td class='note'>Motherboard revision</td></tr>"
   "<tr><td>Rotated</td><td><input type='checkbox' name='rot' {rot}></td><td class='note'>For mounting the FADER_X upside-down</td></tr>"
-"</table>"
-"</form>"
+"</table>";
+
+String footerTemplate = "</form>"
 "<script>"
 "setInterval(function(){"
 "fetch('/fader').then(function(response){return response.json()}).then(function(data){"
@@ -165,137 +174,138 @@ void serveGET(EthernetClient client) {
   String clientBuf;
   //Serial.println("************************************");
 
-  while (client.connected()) {
-    if (client.available()) {
+  if (client.connected()) {
+    String line = "";
+    int contentLength = 0;
+    while(client.available()){
       char c = client.read();
       
-      if(c=='\n' || c=='\r'){
-        if(clientBuf.length()>1){
-
-          char ipStr[36];
-            sprintf(ipStr, "Location: http://%i.%i.%i.%i",
-              net.IP_Static[0],
-              net.IP_Static[1],
-              net.IP_Static[2],
-              net.IP_Static[3]);
-              
-          if(clientBuf.startsWith("GET")){
-            //Serial.println(clientBuf);
-          }
+      if(c==10){
+        line = "";
+        
+      }else if(c==13){
+        if(line.startsWith("Content-Length")){
+          contentLength = line.substring(16).toInt()-2;
           
-          if(clientBuf.startsWith("GET /apply")){
-            applySettings(&client, &clientBuf);
+        }else if(line.startsWith("GET / ")){
+          generateIndex();
+           
+          client.println("HTTP/1.1 200 OK");
+          client.println("Connection: open");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println(headTemplate);
+          client.writeFully(htmlBuf);
+          client.flush();
 
-            client.println("HTTP/1.1 301 Moved Permanently");
-            client.println(ipStr);
-            client.println("Connection: close");
-            client.println("Content-Type: text/html");
-            client.println();
-            client.println("<h1>updated</h1>");
+        }else if(line.startsWith("GET /reset ")){
+          client.println("HTTP/1.1 200 OK");
+          client.println("Connection: open");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println(headTemplate);
+          client.println("<header>FADER_X Configuration</header>");
+          client.writeFully("<h3 style='padding:20px;'>Are you sure you want to perform a factory reset?</h3>");
+          client.writeFully("<p style='padding:20px;'><a href='/doReset'>Reset</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>Cancel</a></p>");
+          client.writeFully("<p style='padding:20px;'>Admin IP after factory reset will be <u>192.168.1.130</u></p>");
+          client.flush();
+
+        }else if(line.startsWith("GET /doReset ")){
+          factoryReset();
+          globalNewSettingsFlag = true;
+
+          client.println("HTTP/1.1 303 See Other");
+          client.println("Location: http://192.168.1.130");
+          client.println("Connection: close");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.writeFully("<h1>updated</h1>");
+          client.flush();
+
+        }else if(line.startsWith("GET /fader ")){
+
+          client.println("HTTP/1.1 200 OK");
+          client.println("Connection: close");
+          client.println("Content-Type: text/html");
+          client.println();
+
+          char fd[128];
+          sprintf(fd, "[\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\"]",
+            fader1.getChannel(),
+            fader1.getPositionTrimmed(),
+            fader1.getMode(),
+            fader2.getChannel(),
+            fader2.getPositionTrimmed(),
+            fader2.getMode(),
+            fader3.getChannel(),
+            fader3.getPositionTrimmed(),
+            fader3.getMode(),
+            fader4.getChannel(),
+            fader4.getPositionTrimmed(),
+            fader4.getMode(),
+            fader5.getChannel(),
+            fader5.getPositionTrimmed(),
+            fader5.getMode(),
+            fader6.getChannel(),
+            fader6.getPositionTrimmed(),
+            fader6.getMode(),
+            fader7.getChannel(),
+            fader7.getPositionTrimmed(),
+            fader7.getMode(),
+            fader8.getChannel(),
+            fader8.getPositionTrimmed(),
+            fader8.getMode());
+
+            client.writeFully(fd);
             client.flush();
-            break;
-            
-          }else if(clientBuf.startsWith("GET /fader ")){
-            
-            client.println("HTTP/1.1 200 OK");
-            client.println("Connection: close");
-            client.println("Content-Type: text/html");
-            client.println();
 
-            char fd[128];
-            sprintf(fd, "[\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\"]",
-              fader1.getChannel(),
-              fader1.getPositionTrimmed(),
-              fader1.getMode(),
-              fader2.getChannel(),
-              fader2.getPositionTrimmed(),
-              fader2.getMode(),
-              fader3.getChannel(),
-              fader3.getPositionTrimmed(),
-              fader3.getMode(),
-              fader4.getChannel(),
-              fader4.getPositionTrimmed(),
-              fader4.getMode(),
-              fader5.getChannel(),
-              fader5.getPositionTrimmed(),
-              fader5.getMode(),
-              fader6.getChannel(),
-              fader6.getPositionTrimmed(),
-              fader6.getMode(),
-              fader7.getChannel(),
-              fader7.getPositionTrimmed(),
-              fader7.getMode(),
-              fader8.getChannel(),
-              fader8.getPositionTrimmed(),
-              fader8.getMode());
-
-            client.println(fd);
-            client.flush();
-
-            break;
-
-          }else if(clientBuf.startsWith("GET /reset ")){
-
-            client.println("HTTP/1.1 200 OK");
-            client.println("Connection: open");
-            client.println("Content-Type: text/html");
-            client.println();
-            client.println(headTemplate);
-            client.println("<header>FADER_X Configuration</header>");
-            client.writeFully("<h3 style='padding:20px;'>Are you sure you want to perform a factory reset?</h3>");
-            client.writeFully("<p style='padding:20px;'><a href='/doReset'>Reset</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>Cancel</a></p>");
-            client.writeFully("<p style='padding:20px;'>Admin IP after factory reset will be <u>192.168.1.130</u></p>");
-            //client.close();
-            break;
-
-          }else if(clientBuf.startsWith("GET /doReset ")){
-
-            factoryReset();
-            globalNewSettingsFlag = true;
-
-            client.println("HTTP/1.1 303 See Other");
-            client.println("Location: http://192.168.1.130");
-            client.println("Connection: close");
-            client.println("Content-Type: text/html");
-            client.println();
-            client.println("<h1>updated</h1>");
-            client.flush();
-            break;
-
-          }else if(clientBuf.startsWith("GET / ")){
-            generateIndex();
-            
-            client.println("HTTP/1.1 200 OK");
-            client.println("Connection: open");
-            client.println("Content-Type: text/html");
-            client.println();
-            client.println(headTemplate);
-            client.writeFully(htmlBuf);
-            client.close();
-            break;
-            
-          }else if(clientBuf.startsWith("GET /")){
-            Serial.println("disregard favicon");
-            break;
-
-          }
         }
-        clientBuf = "";
+        //Serial.println(line);
+        
+        line = "";
 
+      }else if(line.length()>contentLength && contentLength!=0){
+        line.concat(c);
+        applySettings(&client, &line);
+
+        char ipStr[36];
+        sprintf(ipStr, "Location: http://%i.%i.%i.%i",
+          net.IP_Static[0],
+          net.IP_Static[1],
+          net.IP_Static[2],
+          net.IP_Static[3]);
+        
+        client.println("HTTP/1.1 302 Found");
+        client.println(ipStr);
+        client.println("Connection: close");
+        client.println("Content-Type: text/html");
+        client.println();
+        client.println("<h1>updated</h1>");
+        client.flush();
+        
       }else{
-        clientBuf.concat(c);
+        line.concat(c);
       }
-
-    }else{
-      break;
     }
   }
-  
 }
 
 void generateIndex(){
 
   String temp = bodyTemplate;
+  temp.concat(channelTemplate);
+
+  switch(EEPROM.read(24)){
+    case OP_Midi:temp.concat(midiTemplate);break;
+    case OP_Midi_NoMotor:temp.concat(midiTemplate);break;
+    case OP_QLab:temp.concat(qlabTemplate);break;
+    case OP_Eos:temp.concat(eosTemplate);break;
+    case OP_X32:temp.concat(x32Template);break;
+  }
+
+  temp.concat(networkingTemplate);
+  temp.concat(tuningTemplate);
+  temp.concat(footerTemplate);
 
   temp.replace("{v1}", versionMajor);
   temp.replace("{v2}", versionMinor);
