@@ -11,7 +11,7 @@
 using namespace qindesign::network;
 
 #define MAJOR 1
-#define SUBVERSION 0
+#define SUBVERSION 1
 #define PATCH 0
 
 EthernetServer globalWebServer(80);
