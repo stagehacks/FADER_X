@@ -227,6 +227,13 @@ void Fader::unpause(){
 }
 void Fader::updateChannel(){
   this->channel = globalFaderChannels[this->index+8*globalPage];
+  
+  if(globalMotherboardRevision>=3){
+    Serial8.print('L');
+    Serial8.print(this->realIndex);
+    Serial8.print("/0@");
+    Serial8.println(this->channel);
+  }
 }
 byte Fader::getChannel(){
   return this->channel;
