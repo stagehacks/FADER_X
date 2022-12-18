@@ -43,7 +43,7 @@ elapsedMillis sincePlaybackPositionChanged = 0;
 void QLab::loop(){
   long mils = millis();
 
-  if(mils-lastHeartbeat>100000){
+  if(mils-lastHeartbeat>10000){
     lastHeartbeat = mils;
     this->heartbeat();
   }
