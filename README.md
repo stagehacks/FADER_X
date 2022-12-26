@@ -23,7 +23,7 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 # Accessing Configuration Web App
 
-#### Configuring your FADER_8 device is done through your web browser. Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. You will likely need to set your computer to a compatible Static address, such as `192.168.1.120` with subnet `255.255.255.0`.
+#### Configuring your FADER_X device is done through your web browser. Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. You will likely need to set your computer to a compatible Static address, such as `192.168.1.120` with subnet `255.255.255.0`.
 
 &nbsp;
 
