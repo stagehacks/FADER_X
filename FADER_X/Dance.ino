@@ -1,6 +1,6 @@
 boolean zeroFlag = false;
 void danceLoop(){
-  long mils = millis()-globalLastBoot;
+  long mils = (millis()-globalLastBoot)%2400;
   
   if(mils<100){
     zeroFlag = false;
