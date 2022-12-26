@@ -27,6 +27,11 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 &nbsp;
 
+# Swapping Fader Pages with OSC
+As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
+
+&nbsp;
+
 --- 
 
 # Device Configuration
@@ -87,14 +92,6 @@ On FADER_X Configuration web app
 ## X32/M32
 - Connects to the console via UDP OSC on port `10023`. 
 - `OSC Destination Port` parameter is ignored.
-
----
-
-
-&nbsp;
-
-# Selecting the Page
-As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
 
 ---
 
