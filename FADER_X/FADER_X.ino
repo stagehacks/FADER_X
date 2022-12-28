@@ -14,7 +14,7 @@ using namespace qindesign::network;
 #define SUBVERSION 1
 #define PATCH 0
 
-EthernetServer globalWebServer(80);
+EthernetServer globalWebServer{80};
 EthernetUDP globalUDP;
 Bounce button1 = Bounce();
 Bounce button2 = Bounce();
