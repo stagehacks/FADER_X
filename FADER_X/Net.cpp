@@ -5,6 +5,7 @@ using namespace qindesign::network;
 
 extern EthernetServer globalWebServer;
 extern EthernetUDP globalUDP;
+extern void changePage(byte p);
 extern Net net;
 
 void Net::setup(){
@@ -67,14 +68,13 @@ char udpBuf[Ethernet.mtu() - 20 - 8];
 extern void serveGET(EthernetClient client);
 
 void Net::loop(){
-  EthernetClient webClient = globalWebServer.accept();
+  EthernetClient webClient = globalWebServer.available();
 
   if(webClient){
     serveGET(webClient);
-    delay(1);
-    webClient.flush();
+    //webClient.flush();
+    delay(2);
     webClient.closeOutput();
-
   }
   
   int udpPacketSize = globalUDP.parsePacket();
@@ -84,9 +84,7 @@ void Net::loop(){
     if(msg.getAddress()=="/page"){
       byte p = msg.getInt(0);
       if(p==1 || p==2 || p==3 || p==4){
-        globalPage = p-1;
-        if(globalMode==3){ qlab.changePage(); }
-        channelUpdateAll();
+        changePage(p);
       }
     }
     
