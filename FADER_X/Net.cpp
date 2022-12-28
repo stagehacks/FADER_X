@@ -61,6 +61,7 @@ void Net::setup(){
 extern EthernetUDP globalUDP;
 extern byte globalPage;
 extern byte globalMode;
+extern byte globalOSCPageControl;
 extern QLab qlab;
 extern void channelUpdateAll();
 char udpBuf[Ethernet.mtu() - 20 - 8];
@@ -78,7 +79,7 @@ void Net::loop(){
   }
   
   int udpPacketSize = globalUDP.parsePacket();
-  if(udpPacketSize){
+  if(globalOSCPageControl>0 && udpPacketSize){
     globalUDP.read(udpBuf, udpPacketSize);
     OSCMessage msg(udpBuf, udpPacketSize);
     if(msg.getAddress()=="/page"){
@@ -89,6 +90,7 @@ void Net::loop(){
     }
     
   }
+  
 }
 
 void Net::loadEEPROM(){
