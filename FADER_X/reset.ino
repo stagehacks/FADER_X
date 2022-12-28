@@ -13,6 +13,19 @@ void newSettings(){
   EEPROM.get(18, globalMotorFrequency);
   globalMotherboardRevision = EEPROM.read(21);
 
+  globalMIDIPageControl = EEPROM.read(29);
+  if(globalMIDIPageControl>1){
+    globalMIDIPageControl = 1;
+  }
+  globalMIDIPageChannel = EEPROM.read(30);
+  if(globalMIDIPageChannel>16){
+    globalMIDIPageChannel = 1;
+  }
+  globalOSCPageControl = EEPROM.read(31);
+  if(globalOSCPageControl>1){
+    globalOSCPageControl = 1;
+  }
+
   for(byte i=0; i<32; i++){
     globalFaderChannels[i] = EEPROM.read(66+i);
   }
@@ -179,6 +192,10 @@ void factoryReset(){
   EEPROM.write(17, defaultMotorScaleFactor); // Motor Scale Factor
   EEPROM.put(18, defaultMotorFrequency); // Motor Drive Frequency
   EEPROM.write(20, 0); // Rotated
+
+  EEPROM.write(29, 1); // MIDI Page Swap Enable
+  EEPROM.write(30, 1); // MIDI Page Swap Channel
+  EEPROM.write(31, 1); // OSC Page Swap Enable
   
   byte mb = EEPROM.read(21);
   
