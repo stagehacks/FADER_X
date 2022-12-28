@@ -169,7 +169,7 @@ String footerTemplate = "</form>"
 "document.getElementById('val'+(i+1)).innerHTML = '<em>'+data[i]+'</em>';"
 "}"
 "});"
-"}, 100000);"
+"}, 100);"
 "</script>"
 "</body></html>";
 
