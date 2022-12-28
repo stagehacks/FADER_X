@@ -11,7 +11,7 @@
 using namespace qindesign::network;
 
 #define MAJOR 1
-#define SUBVERSION 1
+#define SUBVERSION 2
 #define PATCH 0
 
 EthernetServer globalWebServer{80};
@@ -49,6 +49,9 @@ byte globalMotherboardRevision;
 boolean globalNewSettingsFlag = true;
 long globalLastBoot = 0;
 boolean globalFirstBoot = true;
+byte globalMIDIPageControl = 1;
+byte globalMIDIPageChannel = 1;
+byte globalOSCPageControl = 1;
 long lastButton1Press = 0;
 long lastButton2Press = 0;
 long lastSerialLog = -10000;
@@ -89,9 +92,16 @@ void setup() {
   button1.attach(33);
   button1.interval(1);
 
-  pinMode(25, INPUT_PULLUP);
-  button2.attach(25);
-  button2.interval(50);
+  if(EEPROM.read(21)>=3){
+    pinMode(40, INPUT_PULLUP);
+    button2.attach(40);
+    button2.interval(50);
+  
+  }else{
+    pinMode(25, INPUT_PULLUP);
+    button2.attach(25);
+    button2.interval(50);
+  }
   
   analogReadResolution(11);
 
@@ -99,6 +109,8 @@ void setup() {
     encoders[i].channel = i+1;
     encoders[i].realIndex = i;
   }
+
+  usbMIDI.setHandleProgramChange(midiPCHandle);
 }
 int lastLoop = 0;
 void loop() {
@@ -201,7 +213,9 @@ void loop() {
     }
   }
 
- 
+  if(globalMIDIPageControl){
+    usbMIDI.read(globalMIDIPageChannel);
+  }
 
   digitalWrite(LED_BUILTIN, button1.read() && button2.read());
 
@@ -268,6 +282,16 @@ void proLabel(byte index, byte pos, String text){
   }
 }
 
+void midiPCHandle(byte channel, byte prog) {
+  Serial.print("Page Change: ");
+  Serial.println(prog);
+  if(channel==globalMIDIPageChannel){
+    if(prog==1 || prog==2 || prog==3 || prog==4){
+      changePage(prog);
+    }
+  }
+}
+
 
 void channelUpdateAll(){
   fader1.updateChannel();
@@ -300,6 +324,12 @@ void unpauseAllFaders(){
   fader6.unpause();
   fader7.unpause();
   fader8.unpause();
+}
+
+void changePage(byte p){
+  globalPage = p-1;
+  if(globalMode==3){ qlab.changePage(); }
+  channelUpdateAll();
 }
 
 void setFaderTarget(byte index, int value){
