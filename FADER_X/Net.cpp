@@ -4,6 +4,7 @@
 using namespace qindesign::network;
 
 extern EthernetServer globalWebServer;
+extern EthernetUDP globalUDP;
 extern Net net;
 
 void Net::setup(){
@@ -44,10 +45,15 @@ void Net::setup(){
     }
 
     delay(100);
+
     globalWebServer.begin();
     Serial.println("Started Web Server");
     
+    globalUDP.begin(29979);
+    Serial.println("Started OSC Server :29979");
+    
   }
+
   
 }
 
@@ -61,12 +67,14 @@ char udpBuf[Ethernet.mtu() - 20 - 8];
 extern void serveGET(EthernetClient client);
 
 void Net::loop(){
-  EthernetClient webClient = globalWebServer.available();
+  EthernetClient webClient = globalWebServer.accept();
 
   if(webClient){
     serveGET(webClient);
     delay(1);
-    webClient.close();
+    webClient.flush();
+    webClient.closeOutput();
+
   }
   
   int udpPacketSize = globalUDP.parsePacket();
