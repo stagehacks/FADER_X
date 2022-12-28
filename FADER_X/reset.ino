@@ -105,9 +105,6 @@ void newSettings(){
   // Net
   net.loadEEPROM();
   net.setup();
-
-  globalUDP.begin(29979);
-  Serial.println("Started OSC Server :29979");
   
   if(globalMode==OP_Midi || globalMode==OP_Midi_NoMotor){
     midi.setup();
