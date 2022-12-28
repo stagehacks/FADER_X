@@ -177,6 +177,14 @@ void serveGET(EthernetClient client) {
   if (client.connected()) {
     String line = "";
     int contentLength = 0;
+
+    char ipStr[36];
+    sprintf(ipStr, "Location: http://%i.%i.%i.%i",
+      net.IP_Static[0],
+      net.IP_Static[1],
+      net.IP_Static[2],
+      net.IP_Static[3]);
+    
     while(client.available()){
       char c = client.read();
       
@@ -184,6 +192,7 @@ void serveGET(EthernetClient client) {
         line = "";
         
       }else if(c==13){
+          
         if(line.startsWith("Content-Length")){
           contentLength = line.substring(16).toInt()-2;
           
@@ -259,29 +268,39 @@ void serveGET(EthernetClient client) {
             client.writeFully(fd);
             client.flush();
 
+        }else if(line.startsWith("GET /apply ")){
+          client.println("HTTP/1.1 302 Found");
+          client.println(ipStr);
+          client.println("Connection: close");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println("<h1>updated</h1>");
+          client.flush();
+  
+        }else if(line.startsWith("GET /")){
+          client.println("HTTP/1.1 404 Not Found");
+          client.println("Connection: close");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println("<h1>404 Not Found</h1>");
+          client.flush();
+          //Serial.println(line);
+  
         }
-        //Serial.println(line);
-        
+      
         line = "";
 
-      }else if(line.length()>contentLength && contentLength!=0){
-        line.concat(c);
-        applySettings(&client, &line);
-
-        char ipStr[36];
-        sprintf(ipStr, "Location: http://%i.%i.%i.%i",
-          net.IP_Static[0],
-          net.IP_Static[1],
-          net.IP_Static[2],
-          net.IP_Static[3]);
-        
-        client.println("HTTP/1.1 302 Found");
-        client.println(ipStr);
-        client.println("Connection: close");
-        client.println("Content-Type: text/html");
-        client.println();
-        client.println("<h1>updated</h1>");
-        client.flush();
+      }else if(line.startsWith("sessionToken") && line.length()>contentLength){
+          line.concat(c);
+          applySettings(&client, &line);
+  
+          client.println("HTTP/1.1 302 Found");
+          client.println(ipStr);
+          client.println("Connection: close");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println("<h1>updated</h1>");
+          client.flush();
         
       }else{
         line.concat(c);
