@@ -103,6 +103,10 @@ boolean applySettings(EthernetClient*client, String*b){
   int e1 = containsParam(b, "e1");
   int e2 = containsParam(b, "e2");
 
+  int p0 = containsParam(b, "p0");
+  int p1 = containsParam(b, "p1");
+  int p2 = containsParam(b, "p2");
+
   int x1 = containsParam(b, "x1");
   
   // Motor Settings
@@ -421,6 +425,23 @@ boolean applySettings(EthernetClient*client, String*b){
   if(n1 || n2 || n3 || n4 || n5 || n6){
     Ethernet.begin(net.IP_Static, net.IP_Subnet, net.IP_Gateway);
     //Udp.begin(net.IP_SelfPort);
+  }
+
+  if(p0){
+    EEPROM.write(29, 1);
+  }else{
+    EEPROM.write(29, 0);
+  }
+  if(p1){
+    byte val = getParameter(b, p1).toInt();
+    if(val>=0 && val<=16){
+      EEPROM.write(30, val);
+    }
+  }
+  if(p2){
+    EEPROM.write(31, 1);
+  }else{
+    EEPROM.write(31, 0);
   }
 
   return true;

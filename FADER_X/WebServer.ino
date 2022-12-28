@@ -4,11 +4,11 @@ String headTemplate = "<!DOCTYPE HTML>\n"
 "  <title>FADER_X Configuration</title>\n"
 "  <style type='text/css'>\n"
 "    body{font-family:sans-serif;font-size:16px;color:#aaa;margin:100px 0px;background-color:#262b30;}\n"
-"    table{width:700px;margin:20px 20px 30px;border:#454b4f 1px solid;border-radius:5px;box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;}\n"
+"    table{width:850px;margin:20px 20px 30px;border:#454b4f 1px solid;border-radius:5px;box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;}\n"
 "    th{text-align:left;font-size:14px;padding:7px 12px;background-color:#454b4f;color:white;}\n"
 "    .block td:nth-child(1){width:160px;}\n"
 "    .block td:nth-child(2){width:190px !important;}\n"
-"    .block.mode{margin-left: 60px; width: 660px;}\n"
+"    .block.mode{margin-left: 60px; width: 810px;}\n"
 "    td{padding:5px 8px 5px 12px;}\n"
 "    tbody tr:nth-child(odd){background-color: #21262b;}\n"
 "    input,select{width:165px;background:transparent !important;font-size:16px;border:2px solid #33383d;border-radius:4px;font-family:monospace;padding:3px;color:white;}\n"
@@ -106,6 +106,13 @@ String networkingTemplate = "<table class='block'>"
   "<tr><td>MAC Address</td><td><em>{net-mac}</em></td><td></td></tr>"
 "</table>";
 
+String controlTemplate = "<table class='block'>"
+  "<tr><th colspan='3'>Page Selection</th></tr>"
+  "<tr><td>Use MIDI</td><td><input type='checkbox' name='p0' {page-MIDI-en}></td><td class='note'>Change the active Fader Page using MIDI Program Change</td></tr>"
+  "<tr><td>Page MIDI Channel</td><td><input type='number' value='{page-MIDI}' name='p1' min='1' max='16'></td><td></td>"
+  "<tr><td>Use OSC</td><td><input type='checkbox' name='p2' {page-OSC}></td><td class='note'>Change the active Fader Page by sending udp OSC <u>/page {x}</u> to <u>{osc-ip}:29979</u></td></tr>"
+"</table>";
+
 String midiTemplate = "<table class='block mode'>"
   "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; MIDI Mode</th></tr>"
   "<tr><td>Send Channel</td><td><input value='{midi-send-ch}' type='number' name='m92' min='1' max='16'></td><td></td></tr>"
@@ -162,7 +169,7 @@ String footerTemplate = "</form>"
 "document.getElementById('val'+(i+1)).innerHTML = '<em>'+data[i]+'</em>';"
 "}"
 "});"
-"}, 100);"
+"}, 100000);"
 "</script>"
 "</body></html>";
 
@@ -170,9 +177,17 @@ char htmlBuf[9000];
 
 char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+#define ACTION_200_INDEX 1
+#define ACTION_200_RESET 4
+#define ACTION_200_FADER 5
+#define ACTION_303_APPLY 2
+#define ACTION_303 3
+#define ACTION_404 6
+
 void serveGET(EthernetClient client) {
   String clientBuf;
   //Serial.println("************************************");
+  
 
   if (client.connected()) {
     String line = "";
@@ -184,6 +199,9 @@ void serveGET(EthernetClient client) {
       net.IP_Static[1],
       net.IP_Static[2],
       net.IP_Static[3]);
+
+    byte action = 0;
+    String post = "";
     
     while(client.available()){
       char c = client.read();
@@ -197,115 +215,122 @@ void serveGET(EthernetClient client) {
           contentLength = line.substring(16).toInt()-2;
           
         }else if(line.startsWith("GET / ")){
-          generateIndex();
-           
-          client.println("HTTP/1.1 200 OK");
-          client.println("Connection: open");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.println(headTemplate);
-          client.writeFully(htmlBuf);
-          client.flush();
+          action = ACTION_200_INDEX;  
 
         }else if(line.startsWith("GET /reset ")){
-          client.println("HTTP/1.1 200 OK");
-          client.println("Connection: open");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.println(headTemplate);
-          client.println("<header>FADER_X Configuration</header>");
-          client.writeFully("<h3 style='padding:20px;'>Are you sure you want to perform a factory reset?</h3>");
-          client.writeFully("<p style='padding:20px;'><a href='/doReset'>Reset</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>Cancel</a></p>");
-          client.writeFully("<p style='padding:20px;'>Admin IP after factory reset will be <u>192.168.1.130</u></p>");
-          client.flush();
+          action = ACTION_200_RESET;
 
         }else if(line.startsWith("GET /doReset ")){
           factoryReset();
           globalNewSettingsFlag = true;
-
-          client.println("HTTP/1.1 303 See Other");
-          client.println("Location: http://192.168.1.130");
-          client.println("Connection: close");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.writeFully("<h1>updated</h1>");
-          client.flush();
+          action = ACTION_303;
 
         }else if(line.startsWith("GET /fader ")){
-
-          client.println("HTTP/1.1 200 OK");
-          client.println("Connection: close");
-          client.println("Content-Type: text/html");
-          client.println();
-
-          char fd[128];
-          sprintf(fd, "[\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\"]",
-            fader1.getChannel(),
-            fader1.getPositionTrimmed(),
-            fader1.getMode(),
-            fader2.getChannel(),
-            fader2.getPositionTrimmed(),
-            fader2.getMode(),
-            fader3.getChannel(),
-            fader3.getPositionTrimmed(),
-            fader3.getMode(),
-            fader4.getChannel(),
-            fader4.getPositionTrimmed(),
-            fader4.getMode(),
-            fader5.getChannel(),
-            fader5.getPositionTrimmed(),
-            fader5.getMode(),
-            fader6.getChannel(),
-            fader6.getPositionTrimmed(),
-            fader6.getMode(),
-            fader7.getChannel(),
-            fader7.getPositionTrimmed(),
-            fader7.getMode(),
-            fader8.getChannel(),
-            fader8.getPositionTrimmed(),
-            fader8.getMode());
-
-            client.writeFully(fd);
-            client.flush();
+          action = ACTION_200_FADER;
 
         }else if(line.startsWith("GET /apply ")){
-          client.println("HTTP/1.1 302 Found");
-          client.println(ipStr);
-          client.println("Connection: close");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.println("<h1>updated</h1>");
-          client.flush();
+          action = ACTION_303;
   
         }else if(line.startsWith("GET /")){
-          client.println("HTTP/1.1 404 Not Found");
-          client.println("Connection: close");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.println("<h1>404 Not Found</h1>");
-          client.flush();
-          //Serial.println(line);
+          action = ACTION_404;
   
         }
-      
         line = "";
 
       }else if(line.startsWith("sessionToken") && line.length()>contentLength){
           line.concat(c);
-          applySettings(&client, &line);
-  
-          client.println("HTTP/1.1 302 Found");
-          client.println(ipStr);
-          client.println("Connection: close");
-          client.println("Content-Type: text/html");
-          client.println();
-          client.println("<h1>updated</h1>");
-          client.flush();
+          post = line;
+          action = ACTION_303_APPLY;
         
       }else{
         line.concat(c);
       }
     }
+
+    if(action==ACTION_200_INDEX){
+      generateIndex();
+           
+      client.println("HTTP/1.1 200 OK");
+      client.println("Connection: open");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println(headTemplate);
+      client.writeFully(htmlBuf);
+      
+    }else if(action==ACTION_303_APPLY){
+      client.println("HTTP/1.1 303 See Other");
+      client.println(ipStr);
+      client.println("Connection: keep-alive");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("<h1>updated</h1>");
+      client.flush();
+      
+      applySettings(&client, &post);
+
+    }else if(action==ACTION_303){
+      client.println("HTTP/1.1 303 See Other");
+      client.println(ipStr);
+      client.println("Connection: keep-alive");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("<h1>updated</h1>");
+            
+    }else if(action==ACTION_200_RESET){
+      client.println("HTTP/1.1 200 OK");
+      client.println("Connection: open");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println(headTemplate);
+      client.println("<header>FADER_X Configuration</header>");
+      client.writeFully("<h3 style='padding:20px;'>Are you sure you want to perform a factory reset?</h3>");
+      client.writeFully("<p style='padding:20px;'><a href='/doReset'>Reset</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='./'>Cancel</a></p>");
+      client.writeFully("<p style='padding:20px;'>Admin IP after factory reset will be <u>192.168.1.130</u></p>");
+      
+    }else if(action==ACTION_200_FADER){
+      client.println("HTTP/1.1 200 OK");
+      client.println("Connection: keep-alive");
+      client.println("Content-Type: text/html");
+      client.println();
+
+      char fd[128];
+      sprintf(fd, "[\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\",\"%i@%i (%i)\"]",
+        fader1.getChannel(),
+        fader1.getPositionTrimmed(),
+        fader1.getMode(),
+        fader2.getChannel(),
+        fader2.getPositionTrimmed(),
+        fader2.getMode(),
+        fader3.getChannel(),
+        fader3.getPositionTrimmed(),
+        fader3.getMode(),
+        fader4.getChannel(),
+        fader4.getPositionTrimmed(),
+        fader4.getMode(),
+        fader5.getChannel(),
+        fader5.getPositionTrimmed(),
+        fader5.getMode(),
+        fader6.getChannel(),
+        fader6.getPositionTrimmed(),
+        fader6.getMode(),
+        fader7.getChannel(),
+        fader7.getPositionTrimmed(),
+        fader7.getMode(),
+        fader8.getChannel(),
+        fader8.getPositionTrimmed(),
+        fader8.getMode());
+
+      client.writeFully(fd);
+
+    }else if(action==ACTION_404){
+      client.println("HTTP/1.1 404 Not Found");
+      client.println("Connection: close");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("<h1>404 Not Found</h1>");
+      
+    }
+    
   }
 }
 
@@ -323,6 +348,7 @@ void generateIndex(){
   }
 
   temp.concat(networkingTemplate);
+  temp.concat(controlTemplate);
   temp.concat(tuningTemplate);
   temp.concat(footerTemplate);
 
@@ -471,6 +497,20 @@ void generateIndex(){
   temp.replace("{tok2}", letters[random(0, 36)]);
   temp.replace("{tok3}", letters[random(0, 36)]);
   temp.replace("{tok4}", letters[random(0, 36)]);
+
+  if(globalMIDIPageControl>0){
+    temp.replace("{page-MIDI-en}", "checked");
+  }else{
+    temp.replace("{page-MIDI-en}", "");
+  }
+  temp.replace("{page-MIDI}", globalMIDIPageChannel);
+  if(globalOSCPageControl>0){
+    temp.replace("{page-OSC}", "checked");
+  }else{
+    temp.replace("{page-OSC}", "");
+  }
+
+  temp.replace("{osc-ip}", LocalIPBuf);
 
   temp.toCharArray(htmlBuf, temp.length()+1);
 
