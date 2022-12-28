@@ -21,12 +21,21 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 &nbsp;
 
+# Accessing Configuration Web App
+
+#### Configuring your FADER_X device is done through your web browser. Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. You will likely need to set your computer to a compatible Static address, such as `192.168.1.120` with subnet `255.255.255.0`.
+
 &nbsp;
+
+# Swapping Fader Pages with OSC
+As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
+
+&nbsp;
+
+--- 
 
 # Device Configuration
 <img width="400px" src="https://user-images.githubusercontent.com/919746/193483214-978e690e-beae-4dc0-bc48-3eb1114815f1.png" align="right">
-
-#### 🚨 Navigate to the IP Address of the FADER_X device in your browser to access the connfiguration web app. The default factory IP for the app is `192.168.1.130`. You will likely need to set your computer to a compatible Static address, such as `192.168.1.120` with subnet `255.255.255.0`.🚨
 
 ## Generic MIDI
 No OSC messages are sent when the FADER_X device is in MIDI mode. The configuration web server is active, and the FADER_X responds to `/page` messages.
@@ -83,14 +92,6 @@ On FADER_X Configuration web app
 ## X32/M32
 - Connects to the console via UDP OSC on port `10023`. 
 - `OSC Destination Port` parameter is ignored.
-
----
-
-
-&nbsp;
-
-# Selecting the Page
-As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
 
 ---
 
