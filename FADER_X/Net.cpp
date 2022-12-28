@@ -74,7 +74,7 @@ void Net::loop(){
   if(webClient){
     serveGET(webClient);
     //webClient.flush();
-    delay(2);
+    delay(1);
     webClient.closeOutput();
   }
   
