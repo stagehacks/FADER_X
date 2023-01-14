@@ -27,8 +27,14 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 
 &nbsp;
 
-# Swapping Fader Pages with OSC
-As FADER_8 and FADER_4 have no buttons, the method for changing pages is to send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
+# Changing Fader Pages
+FADER_X devices support (4) virtual Fader Pages. Each can have a unique channel assigned to each Fader. As they have no buttons, changing Fader Page is accomplished via MIDI or OSC.
+
+### via MIDI
+Send a MIDI Program Change to the device via USB MIDI. The MIDI Channel is adjustable in the web app.
+
+### via OSC
+Send a `/page {1-4}` USP OSC message to port `29979`. For example, `/page 2` would activate page 2.
 
 &nbsp;
 
