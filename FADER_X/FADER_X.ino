@@ -11,7 +11,7 @@
 using namespace qindesign::network;
 
 #define MAJOR 1
-#define SUBVERSION 2
+#define SUBVERSION 3
 #define PATCH 0
 
 EthernetServer globalWebServer{80};
@@ -71,6 +71,7 @@ Encoder encoders[8];
 #define OP_Eos 6
 #define OP_DiGiCo 7
 #define OP_X32 8
+#define OP_XAIR 9
 #define OP_Dance 10
 
 void setup() {
@@ -130,7 +131,7 @@ void loop() {
   }else if(globalMode==OP_Eos){
     eos.loop();
 
-  }else if(globalMode==OP_X32){
+  }else if(globalMode==OP_X32 || globalMode==OP_XAIR){
     x32.loop();
 
   }else if(globalMode==OP_DiGiCo){
@@ -234,7 +235,7 @@ void touchEvent(Fader* fader){
   }else if(globalMode==OP_Eos){
     eos.touchEvent(channel, fader);
     
-  }else if(globalMode==OP_X32){
+  }else if(globalMode==OP_X32 || globalMode==OP_XAIR){
     x32.touchEvent(channel, fader);
     
   }else if(globalMode==OP_DiGiCo){

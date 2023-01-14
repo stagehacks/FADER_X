@@ -4,18 +4,30 @@
 extern Net net;
 extern void setFaderTarget(byte index, int value);
 extern byte globalFaderChannels[32];
+extern byte globalMode;
 
 byte initialIndex = 0;
 long lastInitialRequestAttempt = 0;
 boolean receivedFaderValues = false;
 int lastRequestedInitChannel;
 long lastSubscription = 0;
+int udpPort = 10023;
+
+#define OP_X32 8
+#define OP_XAIR 9
 
 
 void X32::setup(){
-  Serial.println("X32 Setup");
-  udp.begin(10023);
+  if(globalMode==OP_X32){
+    Serial.println("X32 Setup");
+    udpPort = 10023;
+  }else{
+    Serial.println("XAIR Setup");
+    udpPort = 10024;
+  }
 
+  udp.begin(udpPort);
+  
   initialIndex = 0;
   lastInitialRequestAttempt = 0;
 
@@ -34,7 +46,7 @@ void X32::loop(){
     lastInitialRequestAttempt = millis();
     OSCMessage msg("/info");
 
-    udp.beginPacket(net.IP_Destination, 10023);
+    udp.beginPacket(net.IP_Destination, udpPort);
     msg.writeUDP(&udp);
     udp.endPacket();
     
@@ -72,7 +84,7 @@ void X32::touchEvent(int channel, Fader *fader){
   OSCMessage msg(oscStr);
   msg.addFloat(fader->getPositionTrimmed()/1023.0);
   
-  udp.beginPacket(net.IP_Destination, 10023);
+  udp.beginPacket(net.IP_Destination, udpPort);
   msg.writeUDP(&udp);
   udp.endPacket();
 
@@ -146,7 +158,7 @@ void X32::processOSC(OSCMessage msg){
 void X32::updateSubscription(){
   OSCMessage msg("/xremote");
 
-  udp.beginPacket(net.IP_Destination, 10023);
+  udp.beginPacket(net.IP_Destination, udpPort);
   msg.writeUDP(&udp);
   udp.endPacket();
 }
@@ -183,7 +195,7 @@ void X32::initialRequest(){
     //Serial.print("sent: ");
     //Serial.println(oscStr);
     OSCMessage msg(oscStr);
-    udp.beginPacket(net.IP_Destination, 10023);
+    udp.beginPacket(net.IP_Destination, udpPort);
     msg.writeUDP(&udp);
     udp.endPacket();
   }

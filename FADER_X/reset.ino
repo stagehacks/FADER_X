@@ -128,7 +128,7 @@ void newSettings(){
   }else if(globalMode==OP_Eos){
     eos.setup();
     
-  }else if(globalMode==OP_X32){
+  }else if(globalMode==OP_X32 || globalMode==OP_XAIR){
     x32.setup();
     
   }else if(globalMode==OP_DiGiCo){

@@ -33,13 +33,14 @@ String bodyTemplate = "<body>"
 "<input value='{tok1}{tok2}{tok3}{tok4}' name='sessionToken' type='hidden'>"
 "<table class='block'>"
   "<tr><th colspan='3'>Operation</th></tr>"
-  "<tr><td>Mode</td><td><select name='op'>"
+  "<tr><td>Mode</td><td><select name='op' onchange='this.form.submit()'>"
     "<option value='1' {op-1}>MIDI</option>"
     "<option value='2' {op-2}>MIDI (Motors disabled)</option>"
     "<option value='3' {op-3}>QLab</option>"
     "<option value='6' {op-6}>ETC Eos</option>"
     "<option value='7' {op-7}>DiGiCo</option>"
     "<option value='8' {op-8}>X32/M32</option>"
+    "<option value='9' {op-9}>X Air/MR</option>"
     "<option value='10' {op-10}>Dance</option>"
   "</select></td><td></td></tr>"
 "</table>";
@@ -143,6 +144,15 @@ String x32Template = "<table class='block mode'>"
     "<option value='4' {x1-4}>Aux In</option>"
     "<option value='5' {x1-5}>FX Return</option>"
     "<option value='6' {x1-6}>Matrix</option>"
+  "</select></td><td></td></tr>"
+"</table>";
+
+String xAirTemplate = "<table class='block mode'>"
+  "<tr><th colspan='3'>&#11153;&nbsp;&nbsp; X Air/MR Mode</th></tr>"
+  "<tr><td>Target</td><td><select name='x1'>"
+    "<option value='1' {x1-1}>Channel</option>"
+    "<option value='2' {x1-2}>DCA</option>"
+    "<option value='3' {x1-3}>Bus</option>"
   "</select></td><td></td></tr>"
 "</table>";
 
@@ -345,6 +355,7 @@ void generateIndex(){
     case OP_QLab:temp.concat(qlabTemplate);break;
     case OP_Eos:temp.concat(eosTemplate);break;
     case OP_X32:temp.concat(x32Template);break;
+    case OP_XAIR:temp.concat(xAirTemplate);break;
   }
 
   temp.concat(networkingTemplate);
@@ -482,6 +493,7 @@ void generateIndex(){
     case 6:temp.replace("{op-6}", "selected");break;
     case 7:temp.replace("{op-7}", "selected");break;
     case 8:temp.replace("{op-8}", "selected");break;
+    case 9:temp.replace("{op-9}", "selected");break;
     case 10:temp.replace("{op-10}", "selected");break;
   }
   
@@ -491,6 +503,7 @@ void generateIndex(){
   temp.replace("{op-6}", "");
   temp.replace("{op-7}", "");
   temp.replace("{op-8}", "");
+  temp.replace("{op-9}", "");
   temp.replace("{op-10}", "");
 
   temp.replace("{tok1}", letters[random(0, 36)]);
