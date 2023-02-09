@@ -87,6 +87,7 @@ On FADER_X Configuration web app
 ## ETC Eos
 - Connects to the Eos console with a TCP connection on port `3037`. Make sure "Third Party OSC" is enabled in the Shell.
 - `OSC Destination Port` parameter is ignored.
+- To change Fader_X pages from an Eos Magic Sheet, use the Command `/page=1` on an object with Target: `Command`
 
 | Parameter | Factory Value |  |
 | ---- | ---- | ---- |
