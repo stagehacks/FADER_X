@@ -26,11 +26,10 @@ void Eos::loop(){
 
   if(!connected && millis()-lastConnectionAttempt>5000){
     lastConnectionAttempt = millis();
+
     pauseAllFaders();
-    
-    delay(100);
     int conn = this->eosClient.connect(net.IP_Destination, 3037);
-    delay(100);
+    unpauseAllFaders();
     
     if(conn==1){
       OSCMessage msg("/eos/fader/"+String(this->faderBank)+"/config/"+this->faderCount);
@@ -47,9 +46,10 @@ void Eos::loop(){
       fader8.label(String(round(fader8.getPositionTrimmed()/10.23)).concat("%"));
     
       connected = true;
-      unpauseAllFaders();
     }else{
-      Serial.println("Could not connect to Eos");
+      // Serial.print(millis());
+      // Serial.println(" Could not connect to Eos");
+      
     }
     
   }
