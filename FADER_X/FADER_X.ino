@@ -12,7 +12,7 @@ using namespace qindesign::network;
 
 #define MAJOR 1
 #define SUBVERSION 3
-#define PATCH 0
+#define PATCH 1
 
 EthernetServer globalWebServer{80};
 EthernetUDP globalUDP;
@@ -77,7 +77,7 @@ Encoder encoders[8];
 void setup() {
   Serial.begin(115200);
   if(EEPROM.read(21)>=3){
-    Serial8.begin(115200);
+    Serial8.begin(31250);
   }
   
   delay(100);
