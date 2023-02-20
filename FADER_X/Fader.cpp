@@ -230,7 +230,7 @@ void Fader::updateChannel(){
   
   if(globalMotherboardRevision>=3){
     Serial8.print('L');
-    Serial8.print(this->realIndex);
+    Serial8.print(this->index);
     Serial8.print("/0@");
     Serial8.println(this->channel);
   }
@@ -269,7 +269,7 @@ void Fader::setMode(int m){
 
   if(globalMotherboardRevision>=3){
     Serial8.print('T');
-    Serial8.print(String(this->realIndex));
+    Serial8.print(String(this->index));
     if(m==FMODE_Touch){
       Serial8.println("@1");
     }else{
@@ -279,9 +279,10 @@ void Fader::setMode(int m){
 }
 
 void Fader::label(String text){
+  Serial.println();
   if(globalMotherboardRevision>=3){
     Serial8.write('L');
-    Serial8.print(this->realIndex);
+    Serial8.print(this->index);
     Serial8.print("/2@");
     Serial8.println(text);
   }
@@ -290,7 +291,7 @@ void Fader::label(String text){
 void Encoder::label(String text){
   if(globalMotherboardRevision>=3){
     Serial8.write('L');
-    Serial8.print(this->realIndex);
+    Serial8.print(0);
     Serial8.print("/1@");
     Serial8.println(text);
   }
