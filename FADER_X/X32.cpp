@@ -1,4 +1,5 @@
 #include "X32.h"
+#include "X32Address.h"
 #include "Net.h"
 
 extern Net net;
@@ -63,25 +64,12 @@ void X32::loop(){
 
 
 void X32::touchEvent(int channel, Fader *fader){
-  char ch[2];
-  sprintf(ch, "%02i", channel); //leftpad with 0
-
-  String oscStr = "";
-
-  if(xTarget == 1){
-    oscStr = "/ch/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 2){
-    oscStr = "/dca/"+String(channel)+"/fader";
-  }else if(xTarget == 3){
-    oscStr = "/bus/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 4){
-    oscStr = "/auxin/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 5){
-    oscStr = "/fxrtn/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 6){
-    oscStr = "/mtx/"+String(ch)+"/mix/fader"; 
+  char oscAddr[32];
+  if(!x32FaderAddress(globalMode == OP_XAIR, xTarget, channel, oscAddr, sizeof(oscAddr))){
+    Serial.println("Unsupported X32/X Air fader target");
+    return;
   }
-  OSCMessage msg(oscStr);
+  OSCMessage msg(String(oscAddr));
   msg.addFloat(fader->getPositionTrimmed()/1023.0);
   
   udp.beginPacket(net.IP_Destination, udpPort);
@@ -101,6 +89,7 @@ void X32::processOSC(OSCMessage msg){
 
   if(xTarget == 1 && msg.match("/ch/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(globalMode == OP_XAIR, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;
     if(channel == lastRequestedInitChannel){
@@ -109,6 +98,7 @@ void X32::processOSC(OSCMessage msg){
     
   }else if(xTarget == 2 && msg.match("/dca/*/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(globalMode == OP_XAIR, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;  
     if(channel == lastRequestedInitChannel){
@@ -117,36 +107,56 @@ void X32::processOSC(OSCMessage msg){
     
   }else if(xTarget == 3 && msg.match("/bus/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(globalMode == OP_XAIR, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;
     if(channel == lastRequestedInitChannel){
       initialRequest();
     }
     
-  }else if(xTarget == 4 && msg.match("/auxin/*/mix/fader")){
+  }else if(globalMode == OP_X32 && xTarget == 4 && msg.match("/auxin/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(false, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;
     if(channel == lastRequestedInitChannel){
       initialRequest();
     }
     
-  }else if(xTarget == 5 && msg.match("/fxrtn/*/mix/fader")){
+  }else if(globalMode == OP_X32 && xTarget == 5 && msg.match("/fxrtn/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(false, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;
     if(channel == lastRequestedInitChannel){
       initialRequest();
     }
     
-  }else if(xTarget == 6 && msg.match("/mtx/*/mix/fader")){
+  }else if(globalMode == OP_X32 && xTarget == 6 && msg.match("/mtx/*/mix/fader")){
     byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(false, xTarget, channel)) return;
     setFaderTarget(channel, msg.getFloat(0)*1023);
     receivedFaderValues = true;
     if(channel == lastRequestedInitChannel){
       initialRequest();
     }
     
+  }else if(globalMode == OP_XAIR && xTarget == 4 && msg.match("/rtn/aux/mix/fader")){
+    setFaderTarget(1, msg.getFloat(0)*1023);
+    receivedFaderValues = true;
+    if(lastRequestedInitChannel == 1){
+      initialRequest();
+    }
+
+  }else if(globalMode == OP_XAIR && xTarget == 5 && msg.match("/rtn/*/mix/fader")){
+    byte channel = msg.addressPart(1).toInt();
+    if(!x32FaderTargetSupported(true, xTarget, channel)) return;
+    setFaderTarget(channel, msg.getFloat(0)*1023);
+    receivedFaderValues = true;
+    if(channel == lastRequestedInitChannel){
+      initialRequest();
+    }
+
   }else if(msg.match("/info")){
     initialRequest();
     updateSubscription();
@@ -172,29 +182,11 @@ void X32::initialRequest(){
   }
   lastRequestedInitChannel = globalFaderChannels[initialIndex];
 
-  char ch[2];
-  sprintf(ch, "%02i", globalFaderChannels[initialIndex]); //leftpad with 0
-  String oscStr = "";
-
-  if(xTarget == 1 && globalFaderChannels[initialIndex]<=32){
-    oscStr = "/ch/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 2 && globalFaderChannels[initialIndex]<=8){
-    oscStr = "/dca/"+String(globalFaderChannels[initialIndex])+"/fader";
-  }else if(xTarget == 3 && globalFaderChannels[initialIndex]<=16){
-    oscStr = "/bus/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 4 && globalFaderChannels[initialIndex]<=8){
-    oscStr = "/auxin/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 5 && globalFaderChannels[initialIndex]<=8){
-    oscStr = "/fxrtn/"+String(ch)+"/mix/fader";
-  }else if(xTarget == 6 && globalFaderChannels[initialIndex]<=8){
-    oscStr = "/mtx/"+String(ch)+"/mix/fader"; 
-  }
-
-
-  if(oscStr!="" && globalFaderChannels[initialIndex]>0){
+  char oscAddr[32];
+  if(x32FaderAddress(globalMode == OP_XAIR, xTarget, globalFaderChannels[initialIndex], oscAddr, sizeof(oscAddr))){
     //Serial.print("sent: ");
-    //Serial.println(oscStr);
-    OSCMessage msg(oscStr);
+    //Serial.println(oscAddr);
+    OSCMessage msg(String(oscAddr));
     udp.beginPacket(net.IP_Destination, udpPort);
     msg.writeUDP(&udp);
     udp.endPacket();

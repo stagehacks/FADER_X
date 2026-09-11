@@ -153,6 +153,8 @@ String xAirTemplate = "<table class='block mode'>"
     "<option value='1' {x1-1}>Channel</option>"
     "<option value='2' {x1-2}>DCA</option>"
     "<option value='3' {x1-3}>Bus</option>"
+    "<option value='4' {x1-4}>Aux In / USB Playback</option>"
+    "<option value='5' {x1-5}>FX Return</option>"
   "</select></td><td></td></tr>"
 "</table>";
 
