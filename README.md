@@ -10,6 +10,7 @@ Teensy Firmware for FADER_4 and FADER_8 motorized fader banks from [Stage Hacks]
 - QLab (MIDI + UDP OSC)
 - ETC Eos (TCP OSC)
 - X32/M32 (UDP OSC)
+- X Air/MR (UDP OSC)
 - DiGiCo (UDP OSC)
 
 
@@ -99,6 +100,12 @@ On FADER_X Configuration web app
 ## X32/M32
 - Connects to the console via UDP OSC on port `10023`. 
 - `OSC Destination Port` parameter is ignored.
+
+## X Air/MR
+- Connects to the mixer via UDP OSC on port `10024`.
+- Channel 1 selects the single Aux In / USB Playback return.
+- FX Return channels 1-4 select `/rtn/1` through `/rtn/4`.
+- Matrix targets are unavailable because X Air mixers do not provide matrix buses.
 
 ---
 
